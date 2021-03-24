@@ -1,9 +1,6 @@
-node_modules/
-npm-debug.log
-yarn-error.log
-
-
-Homestead.yaml
+/vendor
+/.idea
 Homestead.json
-/.vagrant
+Homestead.yaml
+.env
 .phpunit.result.cache

@@ -16,9 +16,10 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         $validIp = env('IP_VALIDATION');
+        $validIpStatus = env('IP_STATUS');
         $ip = explode("|", $validIp);
         $requestIp = $request->ip();
-        if (!in_array($requestIp, $ip)) {
+        if (!in_array($requestIp, $ip) && $validIpStatus==TRUE) {
             $res['status'] = false;
             $res['message'] = 'Ip Validation failed';
             return response($res, 401);

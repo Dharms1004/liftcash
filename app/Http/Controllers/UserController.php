@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use App\Models\UserWallet;
 
 class UserController extends Controller
 {
@@ -57,6 +58,7 @@ class UserController extends Controller
                         'API_TOKEN' => $api_token
                     ]);
                     if (!empty($userCreate->id)) {
+                        $this->createUserWallet($userCreate->id);
                         $res['status'] = '200';
                         $res['message'] = 'Success';
                         $res['userId'] = $userCreate->id;
@@ -106,6 +108,19 @@ class UserController extends Controller
             $res['status'] = false;
             $res['message'] = $ex->getMessage();
             return response($res, 500);
+        }
+    }
+
+    public function createUserWallet($userId){
+        
+        for($i = 1; $i<=2 ; $i++){
+            $userWalletCreate = UserWallet::create([
+                'BALANCE_TYPE' => $i,
+                'BALANCE' => 0,
+                'CREATED_DATE' => date("Y-m-d h:i:s"),
+                'USER_ID' => $userId
+            ]);
+                
         }
     }
     
