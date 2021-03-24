@@ -26,8 +26,7 @@ class AppOpen extends Controller
         $token = $request->input('api_token');
         $userBalance = DB::table('user_wallet')->join('users', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select(
             DB::raw("MAX(CASE WHEN BALANCE_TYPE = 1 THEN BALANCE ELSE 0 END) AS userCoin"),
-            DB::raw("MAX(CASE WHEN BALANCE_TYPE = 2 THEN BALANCE ELSE 0 END) AS userAmmount"),
-            
+            DB::raw("MAX(CASE WHEN BALANCE_TYPE = 2 THEN BALANCE ELSE 0 END) AS userAmmount")            
         )->where(['users.API_TOKEN' => $token])->first();
 
         if ($userBalance) {
