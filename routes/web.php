@@ -23,3 +23,4 @@ $router->post('/inviteData', ['middleware' => 'auth', 'uses' =>  'InviteUser@inv
 $router->post('/profileUpdate', ['middleware' => 'auth', 'uses' =>  'Profile@update']);
 $router->post('/getProfile', ['middleware' => 'auth', 'uses' =>  'Profile@getProfileInfo']);
 $router->post('/userAppOpen', ['middleware' => 'auth', 'uses' =>  'AppOpen@getUserAppOpen']);
+$router->post('/getAllPromotion', ['middleware' => 'auth', 'uses' =>  'Promotion@getAllPromotion']);

@@ -11,7 +11,7 @@ class Profile extends Controller
     public function update(Request $request)
     {
         $rules = [
-            'userId' => 'required|max:10',
+            //'userId' => 'required|max:10',
             'phone' => 'required|digits:10',
             'locale' => 'required',
             'userName' => 'required',
@@ -20,17 +20,18 @@ class Profile extends Controller
             'profilePic' => 'required',
         ];
         $customMessages = [
-            'required' => 'Please fill email :attribute'
+            'required' => 'Please fill required :attribute'
         ];
         $this->validate($request, $rules, $customMessages);
-        $userId = $request->input('userId');
+        $token = $request->input('api_token');
         $phone = $request->input('phone');
         $locale = $request->input('locale');
         $userName = $request->input('userName');
         $occupation = $request->input('occupation');
         $dob = $request->input('dob');
         $profilePic = $request->input('profilePic');
-        $profileUpdate = User::where('user_id', $userId)->update([
+        $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+        $profileUpdate = User::where('USER_ID', $check_token->USER_ID)->update([
             'PHONE' => $phone,
             'USER_LOCALE' => $locale,
             'USER_NAME' => $userName,
@@ -38,10 +39,11 @@ class Profile extends Controller
             'DOB' => $dob,
             'PROFILE_PIC' => $profilePic
         ]);
+        
         if ($profileUpdate) {
             $res['status'] = '301';
             $res['message'] = 'Success';
-            $res['userId'] = $userId;
+            $res['userId'] = $check_token->USER_ID;
             $res['userName'] = $userName;
             $res['eMail'] = $userName;
             $res['gender'] = $userName;
@@ -60,18 +62,12 @@ class Profile extends Controller
     }
 
     public function getProfileInfo(Request $request){
-        $rules = [
-            'userId' => 'required|max:10',
-            'email' => 'required|email',
-            
-        ];
-        $customMessages = [
-            'required' => 'Please fill required :attribute'
-        ];
-        $this->validate($request, $rules, $customMessages);
+        
+        $token = $request->input('api_token');
+        $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
         $userId=$request->input('userId');
         $email=$request->input('email');
-        $profileData=User::where(['USER_ID' =>$userId ,'SOCIAL_EMAIL' =>$email])->first();
+        $profileData=User::where(['USER_ID' =>$check_token->USER_ID])->first();
         if ($profileData) {
             $res['status'] = '302';
             $res['message'] = 'Success';
@@ -88,7 +84,7 @@ class Profile extends Controller
         } else {
             $res['status'] = false;
             $res['message'] = 'Failed';
-            $res['type'] = 'profile_update';
+            $res['type'] = 'profile_get';
             return response($res);
         }
     }
