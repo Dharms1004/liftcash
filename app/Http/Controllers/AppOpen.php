@@ -30,13 +30,13 @@ class AppOpen extends Controller
         )->where(['users.API_TOKEN' => $token])->first();
 
         if ($userBalance) {
-            $res['status'] = '302';
+            $res['status'] = '200';
             $res['message'] = 'Success';
             $res['userId'] = $userId;
             // $res['userName'] = $userBalance->SOCIAL_NAME;
             // $res['eMail'] = $userBalance->SOCIAL_EMAIL;
             $res['forceUpdate'] = 'false';
-            $res['currency'] = 'inr';
+            $res['currency'] = 'INR';
             $res['userCoin'] = $userBalance->userCoin;
             $res['userAmmount'] = $userBalance->userAmmount;
             // $res['profPic'] = $userBalance->DOB;
