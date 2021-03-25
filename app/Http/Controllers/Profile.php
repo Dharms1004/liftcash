@@ -78,7 +78,7 @@ class Profile extends Controller
             $res['location'] = $profileData->STATE;
             $res['occupation'] = $profileData->OCCUPATION;
             $res['dob'] = $profileData->DOB;
-            $res['profPic'] = $profileData->DOB;
+            $res['profPic'] = $profileData->PROFILE_PIC;
             $res['type'] = 'profile_get';
             return response($res, 200);
         } else {

@@ -27,9 +27,8 @@ class UserController extends Controller
             } else {
                 //registration start 
                 $rules = [
-                    'socialName' => 'required|alpha_num|min:5|max:150',
+                    'socialName' => 'required|min:5|max:150',
                     'socialEmail' => 'required|email|unique:users,SOCIAL_EMAIL',
-                    // 'password' => 'required',
                 ];
                 $customMessages = [
                     'required' => 'Please fill attribute :attribute'
