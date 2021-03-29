@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use App\Models\Promotions;
+use App\Models\User;
+use DB;
+
+class WalletData extends Controller
+{
+    public function getAllWalletData(Request $request)
+    {
+        $rules = [
+            'userId' => 'required|max:10',
+            'versionName' => 'required|max:100',
+            'versionCode' => 'required|max:100',
+            'api_token' => 'required|max:100',
+
+
+        ];
+        $customMessages = [
+            'required' => 'Please fill required :attribute'
+        ];
+        $this->validate($request, $rules, $customMessages);
+        $userId = $request->input('userId');
+        $token = $request->input('api_token');
+        $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+        $WalletData = DB::table('user_wallet')->where('USER_ID', $check_token->USER_ID)->first();
+       
+        $payOutValues = env('PAYOUT_VALUES');
+        $payOutValues = explode("|", $payOutValues);
+        if (!empty($WalletData)) {
+            $res['status'] = '200';
+            $res['message'] = 'Success';
+            $res['type'] = 'get_all_wallet_data';
+            $res['paytmOpt'] = false;
+            $res['paypalOpt'] = true;
+            $res['threshold'] = $WalletData->BALANCE;
+            $res['payoutValues'] = $payOutValues;
+            return response($res, 200);
+        } else {
+            $res['status'] = false;
+            $res['message'] = 'Failed';
+            $res['type'] = 'get_all_wallet_data';
+            return response($res);
+        }
+    }
+    
+}
