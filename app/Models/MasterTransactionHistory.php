@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class MasterTransactionHistory extends Model implements AuthenticatableContract, AuthorizableContract
 {
+    protected $table = 'master_transaction_history';
+    public $timestamps = false;
     use Authenticatable, Authorizable, HasFactory;
 
     /**
@@ -19,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'SOCIAL_EMAIL','SOCIAL_NAME','DEVICE_TYPE','DEVICE_ID','DEVICE_NAME','SOCIAL_TYPE','SOCIAL_ID','PROFILE_PIC','ADVERTISING_ID','VERSION_NAME','VERSION_CODE','API_TOKEN'
+        'USER_ID','BALANCE_TYPE_ID','TRANSACTION_STATUS_ID','TRANSACTION_TYPE_ID','TRANSACTION_AMOUNT','TRANSACTION_DATE','TRANSACTION_DATE','INTERNAL_REFERENCE_NO','CURRENT_TOT_BALANCE','CLOSING_TOT_BALANCE'
     ];
 
     /**
@@ -27,7 +29,5 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $hidden = [
-        'API_TOKEN'
-    ];
+    
 }

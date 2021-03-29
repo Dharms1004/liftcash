@@ -18,6 +18,7 @@ class Profile extends Controller
             'occupation' => 'required',
             'dob' => 'required',
             'profilePic' => 'required',
+            'gender' => 'required',
         ];
         $customMessages = [
             'required' => 'Please fill required :attribute'
@@ -30,6 +31,7 @@ class Profile extends Controller
         $occupation = $request->input('occupation');
         $dob = $request->input('dob');
         $profilePic = $request->input('profilePic');
+        $gender = $request->input('gender');
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
         $profileUpdate = User::where('USER_ID', $check_token->USER_ID)->update([
             'PHONE' => $phone,
@@ -37,20 +39,22 @@ class Profile extends Controller
             'USER_NAME' => $userName,
             'OCCUPATION' => $occupation,
             'DOB' => $dob,
-            'PROFILE_PIC' => $profilePic
+            'PROFILE_PIC' => $profilePic,
+            'GENDER' => $gender
         ]);
+        $userData = User::where('API_TOKEN', $token)->select( 'USER_ID', 'PHONE', 'SOCIAL_EMAIL', 'DEVICE_TYPE', 'DEVICE_ID', 'SOCIAL_TYPE', 'SOCIAL_NAME', 'USER_NAME', 'OCCUPATION', 'DOB', 'PROFILE_PIC', 'GENDER', 'COUNTRY_CODE', 'USER_LOCALE', 'QUALIFICATION', 'STATE')->first();
         
-        if ($profileUpdate) {
+        if ($profileUpdate && !empty($userData)) {
             $res['status'] = '301';
             $res['message'] = 'Success';
-            $res['userId'] = $check_token->USER_ID;
-            $res['userName'] = $userName;
-            $res['eMail'] = $userName;
-            $res['gender'] = $userName;
-            $res['location'] = $userName;
-            $res['occupation'] = $userName;
-            $res['dob'] = $userName;
-            $res['profPic'] = $userName;
+            $res['userId'] = $userData->USER_ID;
+            $res['userName'] = $userData->USER_NAME;
+            $res['eMail'] = $userData->SOCIAL_EMAIL;
+            $res['gender'] = $userData->GENDER;
+            $res['location'] = $userData->STATE;
+            $res['occupation'] = $userData->OCCUPATION;
+            $res['dob'] = $userData->DOB;
+            $res['profPic'] = $userData->PROFILE_PIC;
             $res['type'] = 'profile_update';
             return response($res, 200);
         } else {
@@ -61,13 +65,14 @@ class Profile extends Controller
         }
     }
 
-    public function getProfileInfo(Request $request){
-        
+    public function getProfileInfo(Request $request)
+    {
+
         $token = $request->input('api_token');
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
-        $userId=$request->input('userId');
-        $email=$request->input('email');
-        $profileData=User::where(['USER_ID' =>$check_token->USER_ID])->first();
+        $userId = $request->input('userId');
+        $email = $request->input('email');
+        $profileData = User::where(['USER_ID' => $check_token->USER_ID])->first();
         if ($profileData) {
             $res['status'] = '302';
             $res['message'] = 'Success';
@@ -78,7 +83,7 @@ class Profile extends Controller
             $res['location'] = $profileData->STATE;
             $res['occupation'] = $profileData->OCCUPATION;
             $res['dob'] = $profileData->DOB;
-            $res['profPic'] = $profileData->PROFILE_PIC;
+            $res['profPic'] = $profileData->DOB;
             $res['type'] = 'profile_get';
             return response($res, 200);
         } else {

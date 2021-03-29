@@ -27,8 +27,12 @@ class UserController extends Controller
             } else {
                 //registration start 
                 $rules = [
-                    'socialName' => 'required|min:5|max:150',
                     'socialEmail' => 'required|email|unique:users,SOCIAL_EMAIL',
+                    'deviceId' => 'required|alpha_num|min:5|max:150',
+                    'socialType' => 'required|alpha_num|min:5|max:150',
+                    'socialId' => 'required|alpha_num|min:5|max:150',
+                    'versionName' => 'required|alpha_num|min:5|max:150',
+                    'versionCode' => 'required|alpha_num|min:5|max:150',
                 ];
                 $customMessages = [
                     'required' => 'Please fill attribute :attribute'
@@ -36,24 +40,36 @@ class UserController extends Controller
                 $this->validate($request, $rules, $customMessages);
                 try {
                     $hasher = app()->make('hash');
-                    $phoneNumber = $request->input('phoneNumber');
                     $socialEmail = $request->input('socialEmail');
-                    $socialEmail = $request->input('socialEmail');
-                    $deviceId = $request->input('deviceId');
-                    $socialType = $request->input('socialType');
                     $socialName = $request->input('socialName');
-                    $gender = $request->input('gender');
-                    $countryCode = $request->input('countryCode');
-                    $userLocale = $request->input('userLocale');
+                    $deviceType = $request->input('deviceType');
+                    $deviceId = $request->input('deviceId');
+                    $deviceName = $request->input('deviceName');
+                    $socialType = $request->input('socialType');
+                    $socialId = $request->input('socialId');
+                    $socialImgurl = $request->input('socialImgurl');
                     $advertisingId = $request->input('advertisingId');
                     $versionName = $request->input('versionName');
                     $versionCode = $request->input('versionCode');
+                    $utmSource = $request->input('utmSource');
+                    $utmMedium = $request->input('utmMedium');
+                    $utmTerm = $request->input('utmTerm');
+                    $utmContent = $request->input('utmContent');
+                    $utmCampaign = $request->input('utmCampaign');
                     // $password = $hasher->make($request->input('password'));
                     $api_token = sha1($socialEmail . time());
                     $userCreate = User::create([
-                        'SOCIAL_NAME' => $socialName,
                         'SOCIAL_EMAIL' => $socialEmail,
-                        // 'password' => $password,
+                        'SOCIAL_NAME' => $socialName,
+                        'DEVICE_TYPE' => $deviceType,
+                        'DEVICE_ID' => $deviceId,
+                        'DEVICE_NAME' => $deviceName,
+                        'SOCIAL_TYPE' => $socialType,
+                        'SOCIAL_ID' => $socialId,
+                        'PROFILE_PIC' => $socialImgurl,
+                        'ADVERTISING_ID' => $advertisingId,
+                        'VERSION_NAME' => $versionName,
+                        'VERSION_CODE' => $versionCode,
                         'API_TOKEN' => $api_token
                     ]);
                     if (!empty($userCreate->id)) {
@@ -62,6 +78,7 @@ class UserController extends Controller
                         $res['message'] = 'Success';
                         $res['userId'] = $userCreate->id;
                         $res['socialName'] = $userCreate->SOCIAL_NAME;
+                        $res['socialImgurl'] = $userCreate->PROFILE_PIC;
                         $res['type'] = 'register';
                         $res['api_token'] = $userCreate->API_TOKEN;
                         return response($res, 200);
@@ -89,12 +106,13 @@ class UserController extends Controller
         try {
             $api_token = sha1($login->socialEmail . time());
             $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token]);
-            
+
             if ($update_token) {
                 $res['status'] = '200';
                 $res['message'] = 'Success';
                 $res['userId'] = $login->USER_ID;
                 $res['socialName'] = $login->SOCIAL_NAME;
+                $res['socialImgurl'] = $login->PROFILE_PIC;
                 $res['type'] = 'login';
                 $res['api_token'] = $api_token;
                 return response($res, 200);
@@ -110,17 +128,16 @@ class UserController extends Controller
         }
     }
 
-    public function createUserWallet($userId){
-        
-        for($i = 1; $i<=2 ; $i++){
+    public function createUserWallet($userId)
+    {
+
+        for ($i = 1; $i <= 1; $i++) {
             $userWalletCreate = UserWallet::create([
                 'BALANCE_TYPE' => $i,
                 'BALANCE' => 0,
                 'CREATED_DATE' => date("Y-m-d h:i:s"),
                 'USER_ID' => $userId
             ]);
-                
         }
     }
-    
 }

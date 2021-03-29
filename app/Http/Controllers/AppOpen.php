@@ -26,17 +26,16 @@ class AppOpen extends Controller
         $token = $request->input('api_token');
         $userBalance = DB::table('user_wallet')->join('users', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select(
             DB::raw("MAX(CASE WHEN BALANCE_TYPE = 1 THEN BALANCE ELSE 0 END) AS userCoin"),
-            DB::raw("MAX(CASE WHEN BALANCE_TYPE = 2 THEN BALANCE ELSE 0 END) AS userAmmount")            
-        )->where(['users.API_TOKEN' => $token])->first();
+            DB::raw("MAX(CASE WHEN BALANCE_TYPE = 2 THEN BALANCE ELSE 0 END) AS userAmmount"))->where(['users.API_TOKEN' => $token])->first();
 
         if ($userBalance) {
-            $res['status'] = '200';
+            $res['status'] = '302';
             $res['message'] = 'Success';
             $res['userId'] = $userId;
             // $res['userName'] = $userBalance->SOCIAL_NAME;
             // $res['eMail'] = $userBalance->SOCIAL_EMAIL;
             $res['forceUpdate'] = 'false';
-            $res['currency'] = 'INR';
+            $res['currency'] = 'inr';
             $res['userCoin'] = $userBalance->userCoin;
             $res['userAmmount'] = $userBalance->userAmmount;
             // $res['profPic'] = $userBalance->DOB;

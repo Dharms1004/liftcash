@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class UserWallet extends Model implements AuthenticatableContract, AuthorizableContract
 {
+    protected $table = 'offer';
+    public $timestamps = false;
     use Authenticatable, Authorizable, HasFactory;
 
     /**
@@ -19,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'SOCIAL_EMAIL','SOCIAL_NAME','DEVICE_TYPE','DEVICE_ID','DEVICE_NAME','SOCIAL_TYPE','SOCIAL_ID','PROFILE_PIC','ADVERTISING_ID','VERSION_NAME','VERSION_CODE','API_TOKEN'
+        'OFFER_TYPE', 'OFFER_CATEGORY', 'OFFER_NAME', 'OFFER_DETAILS', 'OFFER_STEPS', 'OFFER_THUMBNAIL', 'OFFER_BANNER', 'OFFER_URL', 'OFFER_OS','OFFER_ORIGIN','CAP','FALLBACK_URL','STARTS_FROM','ENDS_ON','STATUS','OFFER_APP','CREATED_BY'
     ];
 
     /**
@@ -27,7 +29,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $hidden = [
-        'API_TOKEN'
-    ];
 }
