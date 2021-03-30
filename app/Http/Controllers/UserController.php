@@ -31,8 +31,8 @@ class UserController extends Controller
                     'deviceId' => 'required|alpha_num|min:5|max:150',
                     'socialType' => 'required|alpha_num|min:5|max:150',
                     'socialId' => 'required|alpha_num|min:5|max:150',
-                    'versionName' => 'required|alpha_num|min:5|max:150',
-                    'versionCode' => 'required|alpha_num|min:5|max:150',
+                    'versionName' => 'required|min:5|max:150',
+                    'versionCode' => 'required|min:5|max:150',
                 ];
                 $customMessages = [
                     'required' => 'Please fill attribute :attribute'
