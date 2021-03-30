@@ -28,11 +28,11 @@ class UserController extends Controller
                 //registration start 
                 $rules = [
                     'socialEmail' => 'required|email|unique:users,SOCIAL_EMAIL',
-                    'deviceId' => 'required|alpha_num|min:5|max:150',
-                    'socialType' => 'required|alpha_num|min:5|max:150',
-                    'socialId' => 'required|alpha_num|min:5|max:150',
-                    'versionName' => 'required|min:5|max:150',
-                    'versionCode' => 'required|min:5|max:150',
+                    'deviceId' => 'required',
+                    'socialType' => 'required',
+                    'socialId' => 'required',
+                    'versionName' => 'required',
+                    'versionCode' => 'required',
                 ];
                 $customMessages = [
                     'required' => 'Please fill attribute :attribute'
