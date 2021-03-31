@@ -17,7 +17,7 @@ class Promotion extends Controller
 
 
             foreach ($promotion as $promotionData) {
-                $res['status'] = '302';
+                $res['status'] = '200';
                 $res['message'] = 'Success';
                 $res['promoType'] = $promotionData->PROMOTION_TYPE;
                 $res['promoCat'] = $promotionData->PROMOTION_CATEGORY;

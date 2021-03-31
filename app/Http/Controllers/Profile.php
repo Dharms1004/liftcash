@@ -45,7 +45,7 @@ class Profile extends Controller
         $userData = User::where('API_TOKEN', $token)->select( 'USER_ID', 'PHONE', 'SOCIAL_EMAIL', 'DEVICE_TYPE', 'DEVICE_ID', 'SOCIAL_TYPE', 'SOCIAL_NAME', 'USER_NAME', 'OCCUPATION', 'DOB', 'PROFILE_PIC', 'GENDER', 'COUNTRY_CODE', 'USER_LOCALE', 'QUALIFICATION', 'STATE')->first();
         
         if ($profileUpdate && !empty($userData)) {
-            $res['status'] = '301';
+            $res['status'] = '200';
             $res['message'] = 'Success';
             $res['userId'] = $userData->USER_ID;
             $res['userName'] = $userData->USER_NAME;
@@ -74,7 +74,7 @@ class Profile extends Controller
         $email = $request->input('email');
         $profileData = User::where(['USER_ID' => $check_token->USER_ID])->first();
         if ($profileData) {
-            $res['status'] = '302';
+            $res['status'] = '200';
             $res['message'] = 'Success';
             $res['userId'] = $profileData->USER_ID;
             $res['userName'] = $profileData->SOCIAL_NAME;

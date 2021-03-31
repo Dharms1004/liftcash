@@ -29,7 +29,7 @@ class AppOpen extends Controller
             DB::raw("MAX(CASE WHEN BALANCE_TYPE = 2 THEN BALANCE ELSE 0 END) AS userAmmount"))->where(['users.API_TOKEN' => $token])->first();
 
         if ($userBalance) {
-            $res['status'] = '302';
+            $res['status'] = '200';
             $res['message'] = 'Success';
             $res['userId'] = $userId;
             // $res['userName'] = $userBalance->SOCIAL_NAME;
