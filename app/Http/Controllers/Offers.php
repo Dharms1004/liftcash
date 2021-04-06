@@ -55,6 +55,21 @@ class Offers extends Controller
             $allReccomemndedOffersData = "N\A";
         }
 
+        $headlineData = DB::table('headings')->orderBy('ID', 'desc')->where('STATUS',1)->limit($limit)->get();
+
+        if(!empty($headlineData)){
+            foreach ($headlineData as $heading) {
+                $res['ID'] = $heading->ID;
+                $res['NAME'] = $heading->NAME;
+                $res['TYPE'] = $heading->TYPE;
+                $res['THUMBNAIL'] = $heading->THUMBNAIL;
+                
+                $allHeadlineData[] = $res;
+            }
+        }else{
+            $allHeadlineData = "N\A";
+        }
+
         if (!empty($allOffers)) {
             $statusData['status'] = '200';
             $statusData['message'] = 'Success';
@@ -70,7 +85,7 @@ class Offers extends Controller
                 $allOffersData[] = $res;
             }
 
-            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData];
+            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'headlineData' => $allOffersData];
             return response($data, 200);
         } else {
             $res['status'] = false;
