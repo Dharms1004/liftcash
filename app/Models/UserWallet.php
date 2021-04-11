@@ -20,8 +20,9 @@ class UserWallet extends Model implements AuthenticatableContract, AuthorizableC
      *
      * @var array
      */
+
     protected $fillable = [
-        'BALANCE_TYPE','BALANCE','CREATED_DATE','USER_ID','CREATED_DATE'
+        'BALANCE_TYPE','BALANCE','CREATED_DATE','USER_ID','UPDATE_DATE'
     ];
 
     /**

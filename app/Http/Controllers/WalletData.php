@@ -7,9 +7,12 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Promotions;
 use App\Models\User;
 use DB;
+use App\Traits\common_methods;
 
 class WalletData extends Controller
 {
+    use common_methods;
+
     public function getAllWalletData(Request $request)
     {
         $rules = [
@@ -27,8 +30,7 @@ class WalletData extends Controller
         $userId = $request->input('userId');
         $token = $request->input('api_token');
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
-        $WalletData = DB::table('user_wallet')->where('USER_ID', $check_token->USER_ID)->first();
-       
+        $WalletData = $this->getUserBalance($userId);
         $payOutValues = env('PAYOUT_VALUES');
         $payOutValues = explode("|", $payOutValues);
         if (!empty($WalletData)) {

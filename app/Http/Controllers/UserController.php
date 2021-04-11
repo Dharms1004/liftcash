@@ -20,6 +20,7 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
         $email    = $request->input('socialEmail');
+        
         try {
             $login = User::where('SOCIAL_EMAIL', $email)->limit(1)->first();
             if (!empty($login) && $login->count() > 0) { //user already signup return token in response
@@ -56,6 +57,7 @@ class UserController extends Controller
                     $utmTerm = $request->input('utmTerm');
                     $utmContent = $request->input('utmContent');
                     $utmCampaign = $request->input('utmCampaign');
+                    $refferId = $request->input('refferId') ? $request->input('refferId') : null;
                     // $password = $hasher->make($request->input('password'));
                     $api_token = sha1($socialEmail . time());
                     $userCreate = User::create([
@@ -65,6 +67,8 @@ class UserController extends Controller
                         'DEVICE_ID' => $deviceId,
                         'DEVICE_NAME' => $deviceName,
                         'SOCIAL_TYPE' => $socialType,
+                        'REFFER_ID' => $refferId,
+                        'REFFER_CODE' => $this->generateRefferalCode(8),
                         'SOCIAL_ID' => $socialId,
                         'PROFILE_PIC' => $socialImgurl,
                         'ADVERTISING_ID' => $advertisingId,
@@ -140,4 +144,19 @@ class UserController extends Controller
             ]);
         }
     }
+
+    // This function will return a random
+    // string of specified length
+    public function generateRefferalCode($length_of_string)
+    {    
+        // String of all alphanumeric character
+        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    
+        // Shufle the $str_result and returns substring
+        // of specified length
+        return substr(str_shuffle($str_result),0, $length_of_string);
+    }
+  
+
+
 }

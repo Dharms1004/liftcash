@@ -28,3 +28,7 @@ $router->post('/offerDetails', ['middleware' => 'auth', 'uses' =>  'Offers@getOf
 $router->post('/userTransactions', ['middleware' => 'auth', 'uses' =>  'UserTransaction@getUserTransaction']);
 $router->post('/walletData', ['middleware' => 'auth', 'uses' =>  'WalletData@getAllWalletData']);
 $router->post('/offerClicked', ['middleware' => 'auth', 'uses' =>  'OfferClick@clickOffer']);
+$router->post('/invite', ['middleware' => 'auth', 'uses' =>  'InviteUser@invite']);
+$router->post('/spinWheel', ['middleware' => 'auth', 'uses' =>  'UserContest@spinContest']);
+$router->post('/scratchCard', ['middleware' => 'auth', 'uses' =>  'UserContest@scratchCard']);
+$router->post('/redeemCash', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@withdrawAmount']);

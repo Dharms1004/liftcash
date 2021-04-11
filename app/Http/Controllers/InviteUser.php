@@ -12,23 +12,34 @@ class InviteUser extends Controller
     {
         $rules = [
             'userId' => 'required|max:10',
-            'api_token' => 'required',
-            'versionName' => 'required',
+            'versionName' => 'required|max:100',
+            'versionCode' => 'required|max:100',
+            'api_token' => 'required|max:100'
+
         ];
         $customMessages = [
-            'required' => 'Please fill email :attribute'
+            'required' => 'Please fill required :attribute'
         ];
         $this->validate($request, $rules, $customMessages);
-        $user = User::all();
+        $userId = $request->input('userId');
+
+        $user = User::select('REFFER_CODE')->where(['USER_ID' => $userId])->first();
+
         if ($user) {
             $res['status'] = true;
-            $res['message'] = $user;
-            return response($res);
+            $res['message'] = "Success";
+            $res['refferCode'] = $user->REFFER_CODE;
+            $res['inviteUrl'] = env('INVITE_URL');
+
+            $data = ["data" => $res];
+            return response($data);
+
         } else {
             $res['status'] = false;
-            $res['message'] = 'Cannot find user!';
-
-            return response($res);
+            $res['message'] = 'unable to fetch Invite Code.';
+            
+            $data = ["data" => $res];
+            return response($data);
         }
     }
 }

@@ -16,29 +16,23 @@ class AppOpen extends Controller
             'versionName' => 'required|max:100',
             'versionCode' => 'required|max:100',
             'api_token' => 'required|max:100'
-
         ];
         $customMessages = [
             'required' => 'Please fill required :attribute'
         ];
         $this->validate($request, $rules, $customMessages);
         $userId = $request->input('userId');
-        $token = $request->input('api_token');
-        $userBalance = DB::table('user_wallet')->join('users', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select(
-            DB::raw("MAX(CASE WHEN BALANCE_TYPE = 1 THEN BALANCE ELSE 0 END) AS userCoin"),
-            DB::raw("MAX(CASE WHEN BALANCE_TYPE = 2 THEN BALANCE ELSE 0 END) AS userAmmount"))->where(['users.API_TOKEN' => $token])->first();
+        $token  = $request->input('api_token');
+       
+        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.REFFER_CODE', 'user_wallet.BALANCE as userCoin')->where(['users.USER_ID' => $userId])->first();
 
         if ($userBalance) {
             $res['status'] = '200';
             $res['message'] = 'Success';
             $res['userId'] = $userId;
-            // $res['userName'] = $userBalance->SOCIAL_NAME;
-            // $res['eMail'] = $userBalance->SOCIAL_EMAIL;
             $res['forceUpdate'] = 'false';
-            $res['currency'] = 'inr';
+            $res['currency'] = 'INR';
             $res['userCoin'] = $userBalance->userCoin;
-            $res['userAmmount'] = $userBalance->userAmmount;
-            // $res['profPic'] = $userBalance->DOB;
             $res['type'] = 'app_open';
             return response($res, 200);
         } else {
