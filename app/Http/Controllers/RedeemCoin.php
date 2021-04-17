@@ -38,13 +38,9 @@ class RedeemCoin extends Controller
 
         $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
 
-        $openingClosingBalace = $this->getOpeningClosingBalace($check_token->USER_ID); /** get opening and closing balance */
+        $currentTotBalance = $userBalance->BALANCE;
+        $closingTotBalance = $currentTotBalance - $coinsToBeCredit;
         
-        $oldClosingBalance = $openingClosingBalace->CLOSING_TOT_BALANCE ?? 0;
-        $oldCurrentBalance = $openingClosingBalace->CURRENT_TOT_BALANCE ?? 0;
-        
-        $newCurrentBalance = $oldCurrentBalance - $coinsToBeRedeem;
-        $newClosingBalance = $oldCurrentBalance;
 
         date_default_timezone_set('Asia/Kolkata');
 		$currentDate = date('Y-m-d H:i:s');
@@ -66,8 +62,8 @@ class RedeemCoin extends Controller
                     "PAY_MODE" => $paymentMode,
                     "INTERNAL_REFERENCE_NO" => $internalRefNo,
                     "PAYOUT_NUMBER" => $payoutNumber,
-                    "CURRENT_TOT_BALANCE" => $newCurrentBalance,
-                    "CLOSING_TOT_BALANCE" => $newClosingBalance,
+                    "CURRENT_TOT_BALANCE" => $currentTotBalance,
+                    "CLOSING_TOT_BALANCE" => $closingTotBalance,
                     "TRANSACTION_DATE" => $currentDate
                 ];
 

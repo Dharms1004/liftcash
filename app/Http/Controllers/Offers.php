@@ -55,6 +55,24 @@ class Offers extends Controller
             $allReccomemndedOffersData = "N\A";
         }
 
+        $specialOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',3)->limit($limit)->get();
+
+        if(!empty($specialOffers)){
+            foreach ($specialOffers as $specialOffersData) {
+                $res['offerId'] = $specialOffersData->OFFER_ID;
+                $res['offerAmount'] = $specialOffersData->OFFER_AMOUNT;
+                $res['offerName'] = $specialOffersData->OFFER_NAME;
+                $res['packageName'] = $specialOffersData->OFFER_PACKAGE;
+                $res['payoutType'] = $specialOffersData->OFFER_NAME;
+                $res['offerThumbnail'] = $specialOffersData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = $specialOffersData->OFFER_BANNER;
+                $allspecialOffersData[] = $res;
+            }
+        }else{
+            $allspecialOffersData = "N\A";
+        }
+
+
         $headlineData = DB::table('headings')->orderBy('ID', 'desc')->where('STATUS',1)->limit($limit)->get();
 
         if(!empty($headlineData)){
@@ -85,7 +103,7 @@ class Offers extends Controller
                 $allOffersData[] = $res;
             }
 
-            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'headlineData' => $allOffersData];
+            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'specialOffers' => $allspecialOffersData];
             return response($data, 200);
         } else {
             $res['status'] = false;

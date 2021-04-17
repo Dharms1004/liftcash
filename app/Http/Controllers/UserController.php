@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Models\UserWallet;
+use App\Traits\common_methods;
 
 class UserController extends Controller
 {
+    use common_methods;
+
     public function register(Request $request)
     {
         //check if user is alredy exist check start
@@ -77,6 +80,7 @@ class UserController extends Controller
                         'API_TOKEN' => $api_token
                     ]);
                     if (!empty($userCreate->id)) {
+
                         $this->createUserWallet($userCreate->id);
                         $res['status'] = '200';
                         $res['message'] = 'Success';
@@ -135,14 +139,42 @@ class UserController extends Controller
     public function createUserWallet($userId)
     {
 
-        for ($i = 1; $i <= 1; $i++) {
-            $userWalletCreate = UserWallet::create([
-                'BALANCE_TYPE' => $i,
-                'BALANCE' => 0,
-                'CREATED_DATE' => date("Y-m-d h:i:s"),
-                'USER_ID' => $userId
-            ]);
-        }
+        $bonusAmount = env("SIGNUP_BONUS");
+
+        $userWalletCreate = UserWallet::create([
+            'BALANCE_TYPE' => 1,
+            'BALANCE' => $bonusAmount,
+            'CREATED_DATE' => date("Y-m-d h:i:s"),
+            'USER_ID' => $userId
+        ]);
+
+        date_default_timezone_set('Asia/Kolkata');
+		$currentDate = date('Y-m-d H:i:s');
+
+        $internalRefNo = "111" . $check_token->USER_ID;
+		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+		$internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+
+        $currentTotBalance = 0;
+        $closingTotBalance = $bonusAmount;
+
+        $transData = [
+            "USER_ID" => $check_token->USER_ID,
+            "BALANCE_TYPE_ID" => 1,
+            "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
+            "TRANSACTION_TYPE_ID" => 4, /** for coins credited For SignUp Bonus */
+            "PAYOUT_COIN" => $bonusAmount,
+            "PAYOUT_EMIAL" => "",
+            "PAY_MODE" => "",
+            "INTERNAL_REFERENCE_NO" => $internalRefNo,
+            "PAYOUT_NUMBER" => "",
+            "CURRENT_TOT_BALANCE" => $currentTotBalance,
+            "CLOSING_TOT_BALANCE" => $closingTotBalance,
+            "TRANSACTION_DATE" => $currentDate
+        ];
+
+        $this->creditOrDebitCoinsToUser($transData);
     }
 
     // This function will return a random
