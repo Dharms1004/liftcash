@@ -30,8 +30,8 @@ class Offers extends Controller
                 $res['offerName'] = $hotOfferData->OFFER_NAME;
                 $res['packageName'] = $hotOfferData->OFFER_PACKAGE;
                 $res['payoutType'] = $hotOfferData->OFFER_NAME;
-                $res['offerThumbnail'] = $hotOfferData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = $hotOfferData->OFFER_BANNER;
+                $res['offerThumbnail'] = env('THUMB_URL').$hotOfferData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$hotOfferData->OFFER_BANNER;
                 $allHotOffersData[] = $res;
             }
         }else{
@@ -47,8 +47,8 @@ class Offers extends Controller
                 $res['offerName'] = $reccomemndedOfferData->OFFER_NAME;
                 $res['packageName'] = $reccomemndedOfferData->OFFER_PACKAGE;
                 $res['payoutType'] = $reccomemndedOfferData->OFFER_NAME;
-                $res['offerThumbnail'] = $reccomemndedOfferData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = $reccomemndedOfferData->OFFER_BANNER;
+                $res['offerThumbnail'] = env('THUMB_URL').$reccomemndedOfferData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$reccomemndedOfferData->OFFER_BANNER;
                 $allReccomemndedOffersData[] = $res;
             }
         }else{
@@ -64,8 +64,8 @@ class Offers extends Controller
                 $res['offerName'] = $specialOffersData->OFFER_NAME;
                 $res['packageName'] = $specialOffersData->OFFER_PACKAGE;
                 $res['payoutType'] = $specialOffersData->OFFER_NAME;
-                $res['offerThumbnail'] = $specialOffersData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = $specialOffersData->OFFER_BANNER;
+                $res['offerThumbnail'] = env('THUMB_URL').$specialOffersData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$specialOffersData->OFFER_BANNER;
                 $allspecialOffersData[] = $res;
             }
         }else{
@@ -98,8 +98,8 @@ class Offers extends Controller
                 $res['offerName'] = $allOfferData->OFFER_NAME;
                 $res['packageName'] = $allOfferData->OFFER_PACKAGE;
                 $res['payoutType'] = $allOfferData->OFFER_NAME;
-                $res['offerThumbnail'] = $allOfferData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = $allOfferData->OFFER_BANNER;
+                $res['offerThumbnail'] = env('THUMB_URL').$allOfferData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$allOfferData->OFFER_BANNER;
                 $allOffersData[] = $res;
             }
 
@@ -135,8 +135,8 @@ class Offers extends Controller
                 $res['offerName'] = $promotionData->OFFER_NAME;
                 $res['packageName'] = $promotionData->OFFER_PACKAGE;
                 $res['payoutType'] = $promotionData->OFFER_NAME;
-                $res['offerThumbnail'] = $promotionData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = $promotionData->OFFER_BANNER;
+                $res['offerThumbnail'] = env('THUMB_URL').$promotionData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$promotionData->OFFER_BANNER;
                 $res['offerDetails'] = $promotionData->OFFER_DETAILS;
                 $res['offerSteps'] = $promotionData->OFFER_STEPS;
                 $promoData[] = $res;
