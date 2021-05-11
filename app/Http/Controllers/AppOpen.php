@@ -31,7 +31,7 @@ class AppOpen extends Controller
             $res['message'] = 'Success';
             $res['userId'] = $userId;
             $res['forceUpdate'] = 'false';
-            $res['currency'] = 'INR';
+            $res['currency'] = '₹';
             $res['userCoin'] = $userBalance->userCoin;
             $res['type'] = 'app_open';
             return response($res, 200);

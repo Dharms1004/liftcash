@@ -124,25 +124,24 @@ class Offers extends Controller
         ];
         $limit = $request->input('limit');
         $offerId = $request->input('offerId');
-        $promotion = DB::table('offer')->where('OFFER_ID', $offerId)->orderBy('OFFER_ID', 'desc')->limit($limit)->get();
+        $promotion = DB::table('offer')->where('OFFER_ID', $offerId)->orderBy('OFFER_ID', 'desc')->limit($limit)->first();
         if (!empty($promotion)) {
             $statusData['status'] = '200';
             $statusData['message'] = 'Success';
             $statusData['type'] = 'get_all_offers';
-            foreach ($promotion as $promotionData) {
-                $res['offerId'] = $promotionData->OFFER_ID;
-                $res['offerAmount'] = $promotionData->OFFER_AMOUNT;
-                $res['offerName'] = $promotionData->OFFER_NAME;
-                $res['packageName'] = $promotionData->OFFER_PACKAGE;
-                $res['payoutType'] = $promotionData->OFFER_NAME;
-                $res['offerThumbnail'] = env('THUMB_URL').$promotionData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = env('BANNER_URL').$promotionData->OFFER_BANNER;
-                $res['offerDetails'] = $promotionData->OFFER_DETAILS;
-                $res['offerSteps'] = $promotionData->OFFER_STEPS;
-                $promoData[] = $res;
-            }
 
-            $data = ['data' => $statusData, 'offers' => $promoData];
+                $res['offerId'] = $promotion->OFFER_ID;
+                $res['offerAmount'] = $promotion->OFFER_AMOUNT;
+                $res['offerName'] = $promotion->OFFER_NAME;
+                $res['packageName'] = $promotion->OFFER_PACKAGE;
+                $res['payoutType'] = $promotion->OFFER_NAME;
+                $res['offerThumbnail'] = env('THUMB_URL').$promotion->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$promotion->OFFER_BANNER;
+                $res['offerDetails'] = $promotion->OFFER_DETAILS;
+                $res['offerSteps'] = $this->createSteps($promotion->OFFER_STEPS);/** covert into readable steps */
+                $promoData[] = $res;
+           
+                $data = ['data' => $statusData, 'offers' => $promoData];
             return response($data, 200);
         } else {
             $res['status'] = false;
@@ -150,5 +149,19 @@ class Offers extends Controller
             $res['type'] = 'get_all_offers';
             return response($res);
         }
+    }
+
+    public function createSteps($steps){
+
+        $allSteps = json_decode($steps);
+        $newSteps = [];
+        foreach($allSteps as $singleStep){
+            $stepResult = explode("@#",$singleStep->offerSteps);
+            $newSteps[] = [
+                "propertyName" => $stepResult[0],
+                "propertyValue" => $stepResult[1]
+            ];
+        }
+        return $newSteps;
     }
 }
