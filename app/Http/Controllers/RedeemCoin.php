@@ -55,8 +55,8 @@ class RedeemCoin extends Controller
                 $transData = [
                     "USER_ID" => $check_token->USER_ID,
                     "BALANCE_TYPE_ID" => 1,
-                    "TRANSACTION_STATUS_ID" => 3, /** for coins credited succesfully */
-                    "TRANSACTION_TYPE_ID" => 3, /** for coins credited from spin wheel */
+                    "TRANSACTION_STATUS_ID" => 6, /** withdraw pending */
+                    "TRANSACTION_TYPE_ID" => 6, /** withdraw request */
                     "PAYOUT_COIN" => $coinsToBeRedeem,
                     "PAYOUT_EMIAL" => $payoutEmail,
                     "PAY_MODE" => $paymentMode,
