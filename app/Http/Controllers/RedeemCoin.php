@@ -39,7 +39,7 @@ class RedeemCoin extends Controller
         $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
 
         $currentTotBalance = $userBalance->BALANCE;
-        $closingTotBalance = $currentTotBalance - $coinsToBeCredit;
+        $closingTotBalance = $currentTotBalance - $coinsToBeRedeem;
         
 
         date_default_timezone_set('Asia/Kolkata');
