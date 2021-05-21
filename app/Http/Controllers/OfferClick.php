@@ -12,7 +12,6 @@ class OfferClick extends Controller
     public function clickOffer(Request $request)
     {
         $rules = [
-            //'userId' => 'required|max:10',
             'userId' => 'required||max:10',
             'offerId' => 'required||max:20',
             'versionName' => 'required',
@@ -29,10 +28,12 @@ class OfferClick extends Controller
         $versionName = $request->input('versionName');
 
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+
         $offerClicked = OfferClicked::create([
             'USER_ID' => $userId,
             'OFFER_ID' => $offerId
         ]);
+        
         if (!empty($offerClicked)) {
             $res['status'] = '200';
             $res['message'] = 'Success';

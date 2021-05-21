@@ -60,7 +60,15 @@ class UserController extends Controller
                     $utmTerm = $request->input('utmTerm');
                     $utmContent = $request->input('utmContent');
                     $utmCampaign = $request->input('utmCampaign');
-                    $refferId = $request->input('refferId') ? $request->input('refferId') : null;
+                    $refferalCode = $request->input('refferal_code') ? $request->input('refferal_code') : null;
+
+                    if($refferalCode){
+                        $refferData = User::select('USER_ID')->where('REFFER_CODE', $refferalCode)->first();
+                        $refferId = $refferData->USER_ID;
+                    }else{
+                        $refferId = null;
+                    }
+
                     // $password = $hasher->make($request->input('password'));
                     $api_token = sha1($socialEmail . time());
                     $userCreate = User::create([
@@ -81,7 +89,14 @@ class UserController extends Controller
                     ]);
                     if (!empty($userCreate->id)) {
 
+                        /**create user wallet and credit bonus amount */
                         $this->createUserWallet($userCreate->id);
+
+                        /**credit refferal bonus */
+                        if(!empty($refferId)){                            
+                            $this->creditRefferalBonusToUser($refferId);
+                        }
+
                         $res['status'] = '200';
                         $res['message'] = 'Success';
                         $res['userId'] = $userCreate->id;
@@ -151,7 +166,7 @@ class UserController extends Controller
         date_default_timezone_set('Asia/Kolkata');
 		$currentDate = date('Y-m-d H:i:s');
 
-        $internalRefNo = "111" . $check_token->USER_ID;
+        $internalRefNo = "111" . $userId;
 		$internalRefNo = $internalRefNo . mt_rand(100, 999);
 		$internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
 		$internalRefNo = $internalRefNo . mt_rand(100, 999);
@@ -160,7 +175,7 @@ class UserController extends Controller
         $closingTotBalance = $bonusAmount;
 
         $transData = [
-            "USER_ID" => $check_token->USER_ID,
+            "USER_ID" => $userId,
             "BALANCE_TYPE_ID" => 1,
             "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
             "TRANSACTION_TYPE_ID" => 4, /** for coins credited For SignUp Bonus */
@@ -188,7 +203,56 @@ class UserController extends Controller
         // of specified length
         return substr(str_shuffle($str_result),0, $length_of_string);
     }
-  
+
+
+    /**credit refferal bonus to user */
+
+    public function creditRefferalBonusToUser($userId){
+
+        $userBalance = $this->getUserBalance($userId); /** get user's current balance */
+
+        $bonusAmount = env('REFFERAL_BONUS'); /**get bonus amount to be credit */
+
+        /**calculate opening closing balance */
+        $currentTotBalance = $userBalance->BALANCE;
+        $closingTotBalance = $currentTotBalance + $bonusAmount;
+
+        date_default_timezone_set('Asia/Kolkata');
+		$currentDate = date('Y-m-d H:i:s');
+
+        $internalRefNo = "111" . $userId;
+		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+		$internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+
+        try{
+            $transData = [
+                "USER_ID" => $userId,
+                "BALANCE_TYPE_ID" => 1,
+                "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
+                "TRANSACTION_TYPE_ID" => 7, /** for refferal bonus credit */
+                "PAYOUT_COIN" => $bonusAmount,
+                "PAYOUT_EMIAL" => "",
+                "PAY_MODE" => "",
+                "INTERNAL_REFERENCE_NO" => $internalRefNo,
+                "PAYOUT_NUMBER" => "",
+                "CURRENT_TOT_BALANCE" => $currentTotBalance,
+                "CLOSING_TOT_BALANCE" => $closingTotBalance,
+                "TRANSACTION_DATE" => $currentDate
+            ];
+
+            $userNewBalance = $userBalance->BALANCE + $bonusAmount;
+
+            $this->creditOrDebitCoinsToUser($transData);
+            $this->updateUserBalance($userNewBalance, $userId);
+
+           return true;
+
+        }catch(\Illuminate\Database\QueryException $e){
+           return false;
+        }
+
+    }
 
 
 }
