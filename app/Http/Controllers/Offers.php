@@ -30,6 +30,7 @@ class Offers extends Controller
                 $res['offerName'] = $hotOfferData->OFFER_NAME;
                 $res['packageName'] = $hotOfferData->OFFER_PACKAGE;
                 $res['payoutType'] = $hotOfferData->OFFER_NAME;
+                $res['offerInstructions'] = $hotOfferData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$hotOfferData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$hotOfferData->OFFER_BANNER;
                 $allHotOffersData[] = $res;
@@ -47,6 +48,7 @@ class Offers extends Controller
                 $res['offerName'] = $reccomemndedOfferData->OFFER_NAME;
                 $res['packageName'] = $reccomemndedOfferData->OFFER_PACKAGE;
                 $res['payoutType'] = $reccomemndedOfferData->OFFER_NAME;
+                $res['offerInstructions'] = $reccomemndedOfferData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$reccomemndedOfferData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$reccomemndedOfferData->OFFER_BANNER;
                 $allReccomemndedOffersData[] = $res;
@@ -64,6 +66,7 @@ class Offers extends Controller
                 $res['offerName'] = $specialOffersData->OFFER_NAME;
                 $res['packageName'] = $specialOffersData->OFFER_PACKAGE;
                 $res['payoutType'] = $specialOffersData->OFFER_NAME;
+                $res['offerInstructions'] = $specialOffersData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$specialOffersData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$specialOffersData->OFFER_BANNER;
                 $allspecialOffersData[] = $res;
@@ -72,20 +75,22 @@ class Offers extends Controller
             $allspecialOffersData = "N\A";
         }
 
+        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',3)->limit($limit)->get();
 
-        $headlineData = DB::table('headings')->orderBy('ID', 'desc')->where('STATUS',1)->limit($limit)->get();
-
-        if(!empty($headlineData)){
-            foreach ($headlineData as $heading) {
-                $res['ID'] = $heading->ID;
-                $res['NAME'] = $heading->NAME;
-                $res['TYPE'] = $heading->TYPE;
-                $res['THUMBNAIL'] = $heading->THUMBNAIL;
-                
-                $allHeadlineData[] = $res;
+        if(!empty($saleOffers)){
+            foreach ($saleOffers as $saleOffersData) {
+                $res['offerId'] = $saleOffersData->OFFER_ID;
+                $res['offerAmount'] = $saleOffersData->OFFER_AMOUNT;
+                $res['offerName'] = $saleOffersData->OFFER_NAME;
+                $res['packageName'] = $saleOffersData->OFFER_PACKAGE;
+                $res['payoutType'] = $saleOffersData->OFFER_NAME;
+                $res['offerInstructions'] = $saleOffersData->OFFER_INSTRUCTIONS;
+                $res['offerThumbnail'] = env('THUMB_URL').$saleOffersData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$saleOffersData->OFFER_BANNER;
+                $allSaleOffersData[] = $res;
             }
         }else{
-            $allHeadlineData = "N\A";
+            $allSaleOffersData = "N\A";
         }
 
         if (!empty($allOffers)) {
@@ -98,12 +103,13 @@ class Offers extends Controller
                 $res['offerName'] = $allOfferData->OFFER_NAME;
                 $res['packageName'] = $allOfferData->OFFER_PACKAGE;
                 $res['payoutType'] = $allOfferData->OFFER_NAME;
+                $res['offerInstructions'] = $allOfferData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$allOfferData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$allOfferData->OFFER_BANNER;
                 $allOffersData[] = $res;
             }
 
-            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'specialOffers' => $allspecialOffersData];
+            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'specialOffers' => $allspecialOffersData, 'saleOffers' => $allSaleOffersData];
             return response($data, 200);
         } else {
             $res['status'] = false;
@@ -138,7 +144,10 @@ class Offers extends Controller
                 $res['offerThumbnail'] = env('THUMB_URL').$promotion->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$promotion->OFFER_BANNER;
                 $res['offerDetails'] = $promotion->OFFER_DETAILS;
-                $res['offerSteps'] = $this->createSteps($promotion->OFFER_STEPS);/** covert into readable steps */
+                $res['offerInstructions'] = $promotion->OFFER_INSTRUCTIONS;
+                $res['offerUrl'] = $promotion->OFFER_URL;
+                $res['fallbackUrl'] = $promotion->FALLBACK_URL;
+                $res['offerSteps'] = $this->createSteps($promotion->OFFER_STEPS);/** convert into readable steps */
                 $promoData[] = $res;
            
                 $data = ['data' => $statusData, 'offers' => $promoData];
@@ -158,8 +167,8 @@ class Offers extends Controller
         foreach($allSteps as $singleStep){
             $stepResult = explode("@#",$singleStep->offerSteps);
             $newSteps[] = [
-                "propertyName" => $stepResult[0],
-                "propertyValue" => $stepResult[1]
+                "propertyName" => $stepResult[0] ?? "N\A",
+                "propertyValue" => $stepResult[1] ?? 0
             ];
         }
         return $newSteps;

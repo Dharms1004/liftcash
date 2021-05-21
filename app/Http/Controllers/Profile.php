@@ -32,6 +32,9 @@ class Profile extends Controller
         $dob = $request->input('dob');
         $profilePic = $request->input('profilePic');
         $gender = $request->input('gender');
+        $city = $request->input('city');
+        $state = $request->input('state');
+        $country = $request->input('country');
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
         $profileUpdate = User::where('USER_ID', $check_token->USER_ID)->update([
             'PHONE' => $phone,
@@ -40,7 +43,7 @@ class Profile extends Controller
             'OCCUPATION' => $occupation,
             'DOB' => $dob,
             'PROFILE_PIC' => $profilePic,
-            'GENDER' => $gender
+            'GENDER' => $gender,
         ]);
         $userData = User::where('API_TOKEN', $token)->select( 'USER_ID', 'PHONE', 'SOCIAL_EMAIL', 'DEVICE_TYPE', 'DEVICE_ID', 'SOCIAL_TYPE', 'SOCIAL_NAME', 'USER_NAME', 'OCCUPATION', 'DOB', 'PROFILE_PIC', 'GENDER', 'COUNTRY_CODE', 'USER_LOCALE', 'QUALIFICATION', 'STATE')->first();
         
@@ -55,6 +58,9 @@ class Profile extends Controller
             $res['occupation'] = $userData->OCCUPATION;
             $res['dob'] = $userData->DOB;
             $res['profPic'] = $userData->PROFILE_PIC;
+            $res['city'] = $userData->CITY;
+            $res['state'] = $userData->STATE;
+            $res['country'] = $userData->COUNTRY_CODE;
             $res['type'] = 'profile_update';
             return response($res, 200);
         } else {

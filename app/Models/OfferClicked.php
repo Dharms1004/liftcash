@@ -21,7 +21,7 @@ class OfferClicked extends Model implements AuthenticatableContract, Authorizabl
      * @var array
      */
     protected $fillable = [
-        'USER_ID', 'OFFER_ID', 'IP_ADDRESS', 'CLICKED_ON',
+        'USER_ID', 'OFFER_ID', 'CLICK_ID', 'IP_ADDRESS', 'CLICKED_ON',
     ];
 
     /**
