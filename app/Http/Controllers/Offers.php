@@ -75,7 +75,7 @@ class Offers extends Controller
             $allspecialOffersData = "N\A";
         }
 
-        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',3)->limit($limit)->get();
+        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',6)->whereIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
 
         if(!empty($saleOffers)){
             foreach ($saleOffers as $saleOffersData) {
