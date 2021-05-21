@@ -33,3 +33,4 @@ $router->post('/spinWheel', ['middleware' => 'auth', 'uses' =>  'UserContest@spi
 $router->post('/scratchCard', ['middleware' => 'auth', 'uses' =>  'UserContest@scratchCard']);
 $router->post('/watchVideo', ['middleware' => 'auth', 'uses' =>  'UserContest@watchVideo']);
 $router->post('/redeemCash', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@withdrawAmount']);
+$router->get('/offerComplete', 'OfferTracking@index');
