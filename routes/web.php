@@ -31,6 +31,8 @@ $router->post('/offerClicked', ['middleware' => 'auth', 'uses' =>  'OfferClick@c
 $router->post('/invite', ['middleware' => 'auth', 'uses' =>  'InviteUser@invite']);
 $router->post('/spinWheel', ['middleware' => 'auth', 'uses' =>  'UserContest@spinContest']);
 $router->post('/scratchCard', ['middleware' => 'auth', 'uses' =>  'UserContest@scratchCard']);
+$router->post('/diesRoller', ['middleware' => 'auth', 'uses' =>  'UserContest@diesRoller']);
 $router->post('/watchVideo', ['middleware' => 'auth', 'uses' =>  'UserContest@watchVideo']);
 $router->post('/redeemCash', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@withdrawAmount']);
+$router->post('/contestCounter', ['middleware' => 'auth', 'uses' =>  'ContestCounter@index']);
 $router->get('/offerComplete', 'OfferTracking@index');

@@ -273,4 +273,85 @@ class UserContest extends Controller
         }
 
     }
+
+    public function diesRoller(Request $request)
+    {
+        $rules = [
+            'userId' => 'required|max:10',
+            'versionName' => 'required|max:100',
+            'versionCode' => 'required|max:100',
+            'api_token' => 'required|max:100',
+            'coinsToBeCredit' => 'required'
+
+        ];
+        $customMessages = [
+            'required' => 'Please fill required :attribute'
+        ];
+
+        $this->validate($request, $rules, $customMessages);
+        $token = $request->input('api_token');
+        $coinsToBeCredit = $request->input('coinsToBeCredit');
+        $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+
+        $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
+        $getSpinLimit = $this->getDiesLimit($check_token->USER_ID); /** get user's spin count balance */
+
+        $spinLimit = env('DIES_LIMIT');
+
+        $currentTotBalance = $userBalance->BALANCE;
+        $closingTotBalance = $currentTotBalance + $coinsToBeCredit;
+
+        date_default_timezone_set('Asia/Kolkata');
+		$currentDate = date('Y-m-d H:i:s');
+
+        $internalRefNo = "111" . $check_token->USER_ID;
+		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+		$internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+
+        if($getSpinLimit <= $spinLimit){
+
+            try{
+                $transData = [
+                    "USER_ID" => $check_token->USER_ID,
+                    "BALANCE_TYPE_ID" => 1,
+                    "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
+                    "TRANSACTION_TYPE_ID" => 9, /** for coins credited from spin wheel */
+                    "PAYOUT_COIN" => $coinsToBeCredit,
+                    "PAYOUT_EMIAL" => "",
+                    "PAY_MODE" => "",
+                    "INTERNAL_REFERENCE_NO" => $internalRefNo,
+                    "PAYOUT_NUMBER" => "",
+                    "CURRENT_TOT_BALANCE" => $currentTotBalance,
+                    "CLOSING_TOT_BALANCE" => $closingTotBalance,
+                    "TRANSACTION_DATE" => $currentDate
+                ];
+
+                $userNewBalance = $userBalance->BALANCE + $coinsToBeCredit;
+
+                $this->creditOrDebitCoinsToUser($transData);
+                $this->updateUserBalance($userNewBalance, $check_token->USER_ID);
+
+                $res['status'] = '200';
+                $res['message'] = 'Success';
+                $res['type'] = 'Dies_roller_success';
+                $res['totalAttempts'] = $getSpinLimit + 1;
+                return response($res);
+
+            }catch(\Illuminate\Database\QueryException $e){
+                $res['status'] = false;
+                $res['message'] = $e;
+                $res['type'] = 'some_error_occured';
+                $res['totalAttempts'] = $getSpinLimit;
+                return response($res);
+            }
+
+        }else{
+            $res['status'] = false;
+            $res['message'] = 'Failed';
+            $res['type'] = 'scratch_card_limit_exhausted';
+            $res['totalAttempts'] = $getSpinLimit;
+            return response($res);
+        }
+    }
 }

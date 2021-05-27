@@ -37,6 +37,49 @@ trait common_methods
 		$d = new DateTime(date('Y-m-d H:i:s.' . $micro, $t));
 		return $d->format("ymdHisu");
 	}
+
+    public function getSpinLimit($userId){
+
+        $startTime = date('Y-m-d 00:00:00');
+        $endTime = date('Y-m-d 23:59:59');
+
+        $spinTransactionTypeId = 1;
+        $spinTransactionStatusSuccess = 1;
+
+       return DB::table('master_transaction_history')
+            ->where(["USER_ID" => $userId, "TRANSACTION_TYPE_ID" => $spinTransactionTypeId, "TRANSACTION_STATUS_ID" => $spinTransactionStatusSuccess])
+            ->whereBetween('TRANSACTION_DATE',[$startTime, $endTime])
+            ->count();
+    }
+
+    public function getScratchCardLimit($userId){
+
+        $startTime = date('Y-m-d 00:00:00');
+        $endTime = date('Y-m-d 23:59:59');
+
+        $spinTransactionTypeId = 2;
+        $spinTransactionStatusSuccess = 1;
+
+       return DB::table('master_transaction_history')
+            ->where(["USER_ID" => $userId, "TRANSACTION_TYPE_ID" => $spinTransactionTypeId, "TRANSACTION_STATUS_ID" => $spinTransactionStatusSuccess])
+            ->whereBetween('TRANSACTION_DATE',[$startTime, $endTime])
+            ->count();
+    }
+
+    public function getDiesLimit($userId){
+
+        $startTime = date('Y-m-d 00:00:00');
+        $endTime = date('Y-m-d 23:59:59');
+
+        $spinTransactionTypeId = 9;
+        $spinTransactionStatusSuccess = 1;
+
+       return DB::table('master_transaction_history')
+            ->where(["USER_ID" => $userId, "TRANSACTION_TYPE_ID" => $spinTransactionTypeId, "TRANSACTION_STATUS_ID" => $spinTransactionStatusSuccess])
+            ->whereBetween('TRANSACTION_DATE',[$startTime, $endTime])
+            ->count();
+    }
+
     
 
 }

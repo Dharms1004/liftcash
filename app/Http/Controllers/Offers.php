@@ -20,9 +20,9 @@ class Offers extends Controller
             'required' => 'Please fill required :attribute'
         ];
         $limit = $request->input('limit');
-        $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->limit($limit)->get();
+        $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['STATUS' => 1])->limit($limit)->get();
 
-        $hotOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',2)->limit($limit)->get();
+        $hotOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 3, 'STATUS' => 1])->limit($limit)->get();
         if(!empty($hotOffers)){
             foreach ($hotOffers as $hotOfferData) {
                 $res['offerId'] = $hotOfferData->OFFER_ID;
@@ -39,7 +39,7 @@ class Offers extends Controller
             $allHotOffersData = "N\A";
         }
 
-        $reccomemndedOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',1)->limit($limit)->get();
+        $reccomemndedOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 2, 'STATUS' => 1])->limit($limit)->get();
 
         if(!empty($reccomemndedOffers)){
             foreach ($reccomemndedOffers as $reccomemndedOfferData) {
@@ -57,7 +57,7 @@ class Offers extends Controller
             $allReccomemndedOffersData = "N\A";
         }
 
-        $specialOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',3)->limit($limit)->get();
+        $specialOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 4, 'STATUS' => 1])->limit($limit)->get();
 
         if(!empty($specialOffers)){
             foreach ($specialOffers as $specialOffersData) {
@@ -75,7 +75,7 @@ class Offers extends Controller
             $allspecialOffersData = "N\A";
         }
 
-        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where('OFFER_DISPLAY_TYPE',6)->whereIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
+        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 6, 'STATUS' => 1])->whereIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
 
         if(!empty($saleOffers)){
             foreach ($saleOffers as $saleOffersData) {
