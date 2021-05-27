@@ -41,6 +41,7 @@ class WalletData extends Controller
             $res['paypalOpt'] = true;
             $res['threshold'] = $WalletData->BALANCE;
             $res['payoutValues'] = $payOutValues;
+            $res['thresholdValue'] = env('THRESHOLD_VALUES');
             return response($res, 200);
         } else {
             $res['status'] = false;

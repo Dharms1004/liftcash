@@ -44,6 +44,9 @@ class Profile extends Controller
             'DOB' => $dob,
             'PROFILE_PIC' => $profilePic,
             'GENDER' => $gender,
+            'COUNTRY_CODE' => $country,
+            'CITY' => $city,
+            'STATE' => $state,
         ]);
         $userData = User::where('API_TOKEN', $token)->select( 'USER_ID', 'PHONE', 'SOCIAL_EMAIL', 'DEVICE_TYPE', 'DEVICE_ID', 'SOCIAL_TYPE', 'SOCIAL_NAME', 'USER_NAME', 'OCCUPATION', 'DOB', 'PROFILE_PIC', 'GENDER', 'COUNTRY_CODE', 'USER_LOCALE', 'QUALIFICATION', 'STATE')->first();
         
@@ -86,6 +89,8 @@ class Profile extends Controller
             $res['userName'] = $profileData->SOCIAL_NAME;
             $res['eMail'] = $profileData->SOCIAL_EMAIL;
             $res['gender'] = $profileData->GENDER;
+            $res['CITY'] = $profileData->CITY;
+            $res['country'] = $profileData->COUNTRY_CODE;
             $res['location'] = $profileData->STATE;
             $res['occupation'] = $profileData->OCCUPATION;
             $res['dob'] = $profileData->DOB;
