@@ -20,9 +20,38 @@ class Offers extends Controller
             'required' => 'Please fill required :attribute'
         ];
         $limit = $request->input('limit');
+
+        $allOffersData = [];
+        $allHotOffersData = [];
+        $allReccomemndedOffersData = [];
+        $allspecialOffersData = [];
+        $allSaleOffersData = [];
+        
         $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['STATUS' => 1])->limit($limit)->get();
 
+        if (!empty($allOffers)) {
+            $statusData['status'] = '200';
+            $statusData['message'] = 'Success';
+            $statusData['type'] = 'get_all_offers';
+            foreach ($allOffers as $allOfferData) {
+                $res['offerId'] = $allOfferData->OFFER_ID;
+                $res['offerAmount'] = $allOfferData->OFFER_AMOUNT;
+                $res['offerName'] = $allOfferData->OFFER_NAME;
+                $res['packageName'] = $allOfferData->OFFER_PACKAGE;
+                $res['payoutType'] = $allOfferData->OFFER_NAME;
+                $res['offerInstructions'] = $allOfferData->OFFER_INSTRUCTIONS;
+                $res['offerThumbnail'] = env('THUMB_URL').$allOfferData->OFFER_THUMBNAIL;
+                $res['offerBanner'] = env('BANNER_URL').$allOfferData->OFFER_BANNER;
+                $allOffersData[] = $res;
+            }
+
+           
+        } else {
+            $allOffersData = "N\A";
+        }
+
         $hotOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 3, 'STATUS' => 1])->limit($limit)->get();
+       
         if(!empty($hotOffers)){
             foreach ($hotOffers as $hotOfferData) {
                 $res['offerId'] = $hotOfferData->OFFER_ID;
@@ -93,30 +122,11 @@ class Offers extends Controller
             $allSaleOffersData = "N\A";
         }
 
-        if (!empty($allOffers)) {
-            $statusData['status'] = '200';
-            $statusData['message'] = 'Success';
-            $statusData['type'] = 'get_all_offers';
-            foreach ($allOffers as $allOfferData) {
-                $res['offerId'] = $allOfferData->OFFER_ID;
-                $res['offerAmount'] = $allOfferData->OFFER_AMOUNT;
-                $res['offerName'] = $allOfferData->OFFER_NAME;
-                $res['packageName'] = $allOfferData->OFFER_PACKAGE;
-                $res['payoutType'] = $allOfferData->OFFER_NAME;
-                $res['offerInstructions'] = $allOfferData->OFFER_INSTRUCTIONS;
-                $res['offerThumbnail'] = env('THUMB_URL').$allOfferData->OFFER_THUMBNAIL;
-                $res['offerBanner'] = env('BANNER_URL').$allOfferData->OFFER_BANNER;
-                $allOffersData[] = $res;
-            }
-
-            $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'specialOffers' => $allspecialOffersData, 'saleOffers' => $allSaleOffersData];
-            return response($data, 200);
-        } else {
-            $res['status'] = false;
-            $res['message'] = 'Failed';
-            $res['type'] = 'get_all_offers';
-            return response($res);
-        }
+        $statusData['status'] = '200';
+        $statusData['message'] = 'Success';
+        $statusData['type'] = 'get_all_offers';
+        $data = ['data' => $statusData, 'offers' => $allOffersData, 'hotOffers' => $allHotOffersData, 'reccomendedOffers' => $allReccomemndedOffersData, 'specialOffers' => $allspecialOffersData, 'saleOffers' => $allSaleOffersData];
+        return response($data, 200);
     }
     public function getOfferDetails(Request $request)
     {
@@ -134,7 +144,7 @@ class Offers extends Controller
         if (!empty($promotion)) {
             $statusData['status'] = '200';
             $statusData['message'] = 'Success';
-            $statusData['type'] = 'get_all_offers';
+            $statusData['type'] = 'get_single_offers';
 
                 $res['offerId'] = $promotion->OFFER_ID;
                 $res['offerAmount'] = $promotion->OFFER_AMOUNT;
