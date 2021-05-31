@@ -27,7 +27,7 @@ class Offers extends Controller
         $allspecialOffersData = [];
         $allSaleOffersData = [];
         
-        $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['STATUS' => 1])->limit($limit)->get();
+        $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['STATUS' => 1])->whereNotIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
 
         if (!empty($allOffers)) {
             $statusData['status'] = '200';
