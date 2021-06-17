@@ -44,14 +44,14 @@ class OfferTracking extends Controller
         date_default_timezone_set('Asia/Kolkata');
 		$currentDate = date('Y-m-d H:i:s');
 
-        $internalRefNo = "111" . $check_token->USER_ID;
+        $internalRefNo = "111" . $userId;
 		$internalRefNo = $internalRefNo . mt_rand(100, 999);
 		$internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
 		$internalRefNo = $internalRefNo . mt_rand(100, 999);
 
         try{
             $transData = [
-                "USER_ID" => $check_token->USER_ID,
+                "USER_ID" => $userId,
                 "BALANCE_TYPE_ID" => 1,
                 "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
                 "TRANSACTION_TYPE_ID" => 8, /** for coins credited from offer completion */
