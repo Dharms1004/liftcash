@@ -29,18 +29,18 @@ class OfferTracking extends Controller
         $offerWebhookResponse = $request->input('click_id');
 
         $webhookData = \explode("_", $offerWebhookResponse);
-
+        
         $userId = $webhookData[0];
         $offerId  = $webhookData[1];
         $clickId = $webhookData[2];
 
-        $offerAmount = DB::table('offer')->select('offerAmount')->where(['offerId' => $offerId])->first(); /**get offer details by offerId */
-       
+        $offerAmount = DB::table('offer')->select('OFFER_AMOUNT')->where(['OFFER_ID' => $offerId])->first(); /**get offer details by offerId */
+        
         $userBalance = $this->getUserBalance($userId); /** get user's current balance */
-
+        
         $currentTotBalance = $userBalance->BALANCE;
-        $closingTotBalance = $currentTotBalance + $offerAmount;
-
+        $closingTotBalance = $currentTotBalance + $offerAmount->OFFER_AMOUNT;
+        
         date_default_timezone_set('Asia/Kolkata');
 		$currentDate = date('Y-m-d H:i:s');
 
@@ -55,7 +55,7 @@ class OfferTracking extends Controller
                 "BALANCE_TYPE_ID" => 1,
                 "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
                 "TRANSACTION_TYPE_ID" => 8, /** for coins credited from offer completion */
-                "PAYOUT_COIN" => $offerAmount,
+                "PAYOUT_COIN" => $offerAmount->OFFER_AMOUNT,
                 "PAYOUT_EMIAL" => "",
                 "PAY_MODE" => "",
                 "INTERNAL_REFERENCE_NO" => $internalRefNo,
@@ -65,7 +65,7 @@ class OfferTracking extends Controller
                 "TRANSACTION_DATE" => $currentDate
             ];
 
-            $userNewBalance = $userBalance->BALANCE + $offerAmount;
+            $userNewBalance = $userBalance->BALANCE + $offerAmount->OFFER_AMOUNT;
 
             $this->creditOrDebitCoinsToUser($transData);
             $this->updateUserBalance($userNewBalance, $userId);
