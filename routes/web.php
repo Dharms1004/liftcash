@@ -36,3 +36,4 @@ $router->post('/watchVideo', ['middleware' => 'auth', 'uses' =>  'UserContest@wa
 $router->post('/redeemCash', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@withdrawAmount']);
 $router->post('/contestCounter', ['middleware' => 'auth', 'uses' =>  'ContestCounter@index']);
 $router->get('/offerComplete', 'OfferTracking@index');
+$router->post('/getGames', ['middleware' => 'auth', 'uses' => 'Games@getAllGames']);
