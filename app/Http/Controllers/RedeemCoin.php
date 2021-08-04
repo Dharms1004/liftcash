@@ -34,6 +34,7 @@ class RedeemCoin extends Controller
         $paymentMode = $request->input('paymentMode');
         $payoutEmail = $request->input('payoutEmail');
         $payoutNumber = $request->input('payoutNumber');
+        $freefireId = $request->input('freefireId') ?? nul;
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
         $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
@@ -62,6 +63,7 @@ class RedeemCoin extends Controller
                     "PAY_MODE" => $paymentMode,
                     "INTERNAL_REFERENCE_NO" => $internalRefNo,
                     "PAYOUT_NUMBER" => $payoutNumber,
+                    "FREEFIRE_ID" => $freefireId,
                     "CURRENT_TOT_BALANCE" => $currentTotBalance,
                     "CLOSING_TOT_BALANCE" => $closingTotBalance,
                     "TRANSACTION_DATE" => $currentDate
