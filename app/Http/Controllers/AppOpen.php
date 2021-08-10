@@ -17,9 +17,15 @@ class AppOpen extends Controller
             'versionCode' => 'required|max:100',
             'api_token' => 'required|max:100'
         ];
+
+        $currentAppVer = env('APP_VERSION_CODE');
+
+        $forceUpdate = $currentAppVer > $request->versionCode ?  true :  false;
+
         $customMessages = [
             'required' => 'Please fill required :attribute'
         ];
+        
         $this->validate($request, $rules, $customMessages);
         $userId = $request->input('userId');
         $token  = $request->input('api_token');
@@ -30,7 +36,7 @@ class AppOpen extends Controller
             $res['status'] = '200';
             $res['message'] = 'Success';
             $res['userId'] = $userId;
-            $res['forceUpdate'] = 'false';
+            $res['forceUpdate'] = $forceUpdate;
             $res['currency'] = '₹';
             $res['userCoin'] = $userBalance->userCoin;
             $res['type'] = 'app_open';
