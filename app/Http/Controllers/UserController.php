@@ -23,13 +23,13 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
         $email    = $request->input('socialEmail');
-        
+
         try {
             $login = User::where('SOCIAL_EMAIL', $email)->limit(1)->first();
             if (!empty($login) && $login->count() > 0) { //user already signup return token in response
                 return $this->login($login);
             } else {
-                //registration start 
+                //registration start
                 $rules = [
                     'socialEmail' => 'required|email|unique:users,SOCIAL_EMAIL',
                     'deviceId' => 'required',
@@ -93,7 +93,7 @@ class UserController extends Controller
                         $this->createUserWallet($userCreate->id);
 
                         /**credit refferal bonus */
-                        if(!empty($refferId)){                            
+                        if(!empty($refferId)){
                             $this->creditRefferalBonusToUser($refferId);
                         }
 
@@ -115,7 +115,7 @@ class UserController extends Controller
                     $res['message'] = $ex->getMessage();
                     return response($res, 500);
                 }
-                //registration end 
+                //registration end
             }
         } catch (\Illuminate\Database\QueryException $ex) {
             $res['success'] = false;
@@ -195,10 +195,10 @@ class UserController extends Controller
     // This function will return a random
     // string of specified length
     public function generateRefferalCode($length_of_string)
-    {    
+    {
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    
+
         // Shufle the $str_result and returns substring
         // of specified length
         return substr(str_shuffle($str_result),0, $length_of_string);
@@ -242,9 +242,10 @@ class UserController extends Controller
             ];
 
             $userNewBalance = $userBalance->BALANCE + $bonusAmount;
+            $userNewPromoBalance = $userBalance->PROMO_BALANCE + $bonusAmount;
 
             $this->creditOrDebitCoinsToUser($transData);
-            $this->updateUserBalance($userNewBalance, $userId);
+            $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $userId);
 
            return true;
 

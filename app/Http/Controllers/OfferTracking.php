@@ -23,24 +23,24 @@ class OfferTracking extends Controller
         $customMessages = [
             'required' => 'Please fill required :attribute'
         ];
-        
+
         $this->validate($request, $rules, $customMessages);
 
         $offerWebhookResponse = $request->input('click_id');
 
         $webhookData = \explode("_", $offerWebhookResponse);
-        
+
         $userId = $webhookData[0];
         $offerId  = $webhookData[1];
         $clickId = $webhookData[2];
 
         $offerAmount = DB::table('offer')->select('OFFER_AMOUNT')->where(['OFFER_ID' => $offerId])->first(); /**get offer details by offerId */
-        
+
         $userBalance = $this->getUserBalance($userId); /** get user's current balance */
-        
+
         $currentTotBalance = $userBalance->BALANCE;
         $closingTotBalance = $currentTotBalance + $offerAmount->OFFER_AMOUNT;
-        
+
         date_default_timezone_set('Asia/Kolkata');
 		$currentDate = date('Y-m-d H:i:s');
 
@@ -66,9 +66,10 @@ class OfferTracking extends Controller
             ];
 
             $userNewBalance = $userBalance->BALANCE + $offerAmount->OFFER_AMOUNT;
+            $userMainBalance = $userBalance->MAIN_BALANCE + $offerAmount->OFFER_AMOUNT;
 
             $this->creditOrDebitCoinsToUser($transData);
-            $this->updateUserBalance($userNewBalance, $userId);
+            $this->updateUserBalanceMain($userNewBalance, $userMainBalance ,$userId);
 
             $offerClicked = OfferClicked::create([
                 'USER_ID' => $userId,
