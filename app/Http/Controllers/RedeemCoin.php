@@ -34,14 +34,14 @@ class RedeemCoin extends Controller
         $paymentMode = $request->input('paymentMode');
         $payoutEmail = $request->input('payoutEmail');
         $payoutNumber = $request->input('payoutNumber');
-        $freefireId = $request->input('freefireId') ?? nul;
+        $freefireId = $request->input('freefireId') ?? null;
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
         $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
 
         $currentTotBalance = $userBalance->BALANCE;
         $closingTotBalance = $currentTotBalance - $coinsToBeRedeem;
-        
+
 
         date_default_timezone_set('Asia/Kolkata');
 		$currentDate = date('Y-m-d H:i:s');

@@ -25,12 +25,12 @@ class AppOpen extends Controller
         $customMessages = [
             'required' => 'Please fill required :attribute'
         ];
-        
+
         $this->validate($request, $rules, $customMessages);
         $userId = $request->input('userId');
         $token  = $request->input('api_token');
-       
-        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.REFFER_CODE', 'user_wallet.BALANCE as userCoin')->where(['users.USER_ID' => $userId])->first();
+
+        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.REFFER_CODE', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.PROMO_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId])->first();
 
         if ($userBalance) {
             $res['status'] = '200';
@@ -39,6 +39,8 @@ class AppOpen extends Controller
             $res['forceUpdate'] = $forceUpdate;
             $res['currency'] = '₹';
             $res['userCoin'] = $userBalance->userCoin;
+            $res['userPromoCoin'] = $userBalance->userPromoCoin;
+            $res['userMainCoin'] = $userBalance->userMainCoin;
             $res['type'] = 'app_open';
             return response($res, 200);
         } else {

@@ -20,9 +20,14 @@ trait common_methods
         MasterTransactionHistory::insert($data);
     }
 
-    public function updateUserBalance($data, $userId)
+    public function updateUserBalance($totBalance ,$userNewPromoBalance ,$userId)
     {
-        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $data]);
+        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'PROMO_BALANCE' => $userNewPromoBalance]);
+    }
+
+    public function updateUserBalanceMain($totBalance, $mainBalance, $userId)
+    {
+        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance]);
     }
 
     public function getOpeningClosingBalace($userId)
@@ -80,6 +85,6 @@ trait common_methods
             ->count();
     }
 
-    
+
 
 }

@@ -40,6 +40,8 @@ class WalletData extends Controller
             $res['paytmOpt'] = false;
             $res['paypalOpt'] = true;
             $res['threshold'] = $WalletData->BALANCE;
+            $res['promoCoin'] = $WalletData->PROMO_BALANCE;
+            $res['mainCoin'] = $WalletData->MAIN_BALANCE;
             $res['payoutValues'] = $payOutValues;
             $res['thresholdValue'] = env('THRESHOLD_VALUES');
             return response($res, 200);
@@ -50,5 +52,5 @@ class WalletData extends Controller
             return response($res);
         }
     }
-    
+
 }

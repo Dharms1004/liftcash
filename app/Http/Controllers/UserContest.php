@@ -11,7 +11,7 @@ use DB;
 class UserContest extends Controller
 {
     use common_methods;
-    
+
     public function spinContest(Request $request)
     {
         $rules = [
@@ -35,7 +35,7 @@ class UserContest extends Controller
         $getSpinLimit = $this->getSpinLimit($check_token->USER_ID); /** get user's spin count balance */
 
         $spinLimit = env('SPIN_LIMIT');
-        
+
         $currentTotBalance = $userBalance->BALANCE;
         $closingTotBalance = $currentTotBalance + $coinsToBeCredit;
 
@@ -66,9 +66,10 @@ class UserContest extends Controller
                 ];
 
                 $userNewBalance = $userBalance->BALANCE + $coinsToBeCredit;
+                $userNewPromoBalance = $userBalance->PROMO_BALANCE + $coinsToBeCredit;
 
                 $this->creditOrDebitCoinsToUser($transData);
-                $this->updateUserBalance($userNewBalance, $check_token->USER_ID);
+                $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $check_token->USER_ID);
 
                 $res['status'] = '200';
                 $res['message'] = 'Success';
@@ -149,9 +150,10 @@ class UserContest extends Controller
                 ];
 
                 $userNewBalance = $userBalance->BALANCE + $coinsToBeCredit;
+                $userNewPromoBalance = $userBalance->PROMO_BALANCE + $coinsToBeCredit;
 
                 $this->creditOrDebitCoinsToUser($transData);
-                $this->updateUserBalance($userNewBalance, $check_token->USER_ID);
+                $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $check_token->USER_ID);
 
                 $res['status'] = '200';
                 $res['message'] = 'Success';
@@ -256,9 +258,10 @@ class UserContest extends Controller
             ];
 
             $userNewBalance = $userBalance->BALANCE + $coinsToBeCredit;
+            $userNewPromoBalance = $userBalance->PROMO_BALANCE + $coinsToBeCredit;
 
             $this->creditOrDebitCoinsToUser($transData);
-            $this->updateUserBalance($userNewBalance, $check_token->USER_ID);
+            $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $check_token->USER_ID);
 
             $res['status'] = '200';
             $res['message'] = 'Success';
@@ -328,9 +331,10 @@ class UserContest extends Controller
                 ];
 
                 $userNewBalance = $userBalance->BALANCE + $coinsToBeCredit;
+                $userNewPromoBalance = $userBalance->PROMO_BALANCE + $coinsToBeCredit;
 
                 $this->creditOrDebitCoinsToUser($transData);
-                $this->updateUserBalance($userNewBalance, $check_token->USER_ID);
+                $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $check_token->USER_ID);
 
                 $res['status'] = '200';
                 $res['message'] = 'Success';

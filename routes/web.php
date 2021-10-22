@@ -37,3 +37,5 @@ $router->post('/redeemCash', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@wit
 $router->post('/contestCounter', ['middleware' => 'auth', 'uses' =>  'ContestCounter@index']);
 $router->get('/offerComplete', 'OfferTracking@index');
 $router->post('/getGames', ['middleware' => 'auth', 'uses' => 'Games@getAllGames']);
+$router->post('/getActiveContest', ['middleware' => 'auth', 'uses' => 'ContestController@index']);
+$router->post('/submitContestAnswer', ['middleware' => 'auth', 'uses' => 'ContestController@contestAnswer']);
