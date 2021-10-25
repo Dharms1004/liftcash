@@ -14,6 +14,7 @@ class RedeemCoin extends Controller
 
     public function withdrawAmount(Request $request)
     {
+
         $rules = [
             'userId' => 'required|max:10',
             'versionName' => 'required|max:100',
@@ -39,7 +40,14 @@ class RedeemCoin extends Controller
 
         $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
 
+        /**calculate user deductable balance from all balances */
+
+        $amountToBeDedictInMain = $coinsToBeRedeem/2;
+        $amountToBeDedictInPromo = $coinsToBeRedeem/2;
+
         $currentTotBalance = $userBalance->BALANCE;
+        $currentMainBalance = $userBalance->MAIN_BALANCE - $amountToBeDedictInMain;
+        $currentPromoBalance = $userBalance->PROMO_BALANCE - $amountToBeDedictInPromo;
         $closingTotBalance = $currentTotBalance - $coinsToBeRedeem;
 
 
@@ -69,10 +77,9 @@ class RedeemCoin extends Controller
                     "TRANSACTION_DATE" => $currentDate
                 ];
 
-                $userNewBalance = $userBalance->BALANCE - $coinsToBeRedeem;
-
                 $this->creditOrDebitCoinsToUser($transData);
-                $this->updateUserBalance($userNewBalance, $check_token->USER_ID);
+
+                $this->updateUserFinalBalance($currentMainBalance, $currentPromoBalance, $closingTotBalance, $check_token->USER_ID);
 
                 $res['status'] = '200';
                 $res['message'] = 'Success';

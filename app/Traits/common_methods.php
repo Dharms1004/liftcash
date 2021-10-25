@@ -12,7 +12,7 @@ trait common_methods
 {
     public function getUserBalance($userId){
 
-        return UserWallet::select("BALANCE")->where(['USER_ID' => $userId])->first();
+        return UserWallet::select("BALANCE","PROMO_BALANCE","MAIN_BALANCE")->where(['USER_ID' => $userId])->first();
     }
 
     public function creditOrDebitCoinsToUser($data)
@@ -28,6 +28,11 @@ trait common_methods
     public function updateUserBalanceMain($totBalance, $mainBalance, $userId)
     {
         UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance]);
+    }
+
+    public function updateUserFinalBalance($mainBalance, $promoBalance, $totBalance, $userId)
+    {
+        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance, 'PROMO_BALANCE' => $promoBalance]);
     }
 
     public function getOpeningClosingBalace($userId)
