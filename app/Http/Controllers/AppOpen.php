@@ -30,7 +30,7 @@ class AppOpen extends Controller
         $userId = $request->input('userId');
         $token  = $request->input('api_token');
 
-        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.REFFER_CODE', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.PROMO_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId])->first();
+        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.REFFER_CODE', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.MAIN_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId])->first();
 
         if ($userBalance) {
             $res['status'] = '200';
