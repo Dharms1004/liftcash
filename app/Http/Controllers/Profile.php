@@ -49,7 +49,7 @@ class Profile extends Controller
             'STATE' => $state,
         ]);
         $userData = User::where('API_TOKEN', $token)->select( 'USER_ID', 'PHONE', 'SOCIAL_EMAIL', 'DEVICE_TYPE', 'DEVICE_ID', 'SOCIAL_TYPE', 'SOCIAL_NAME', 'USER_NAME', 'OCCUPATION', 'DOB', 'PROFILE_PIC', 'GENDER', 'COUNTRY_CODE', 'USER_LOCALE', 'QUALIFICATION', 'STATE')->first();
-        
+
         if ($profileUpdate && !empty($userData)) {
             $res['status'] = '200';
             $res['message'] = 'Success';
@@ -94,6 +94,7 @@ class Profile extends Controller
             $res['location'] = $profileData->STATE;
             $res['occupation'] = $profileData->OCCUPATION;
             $res['dob'] = $profileData->DOB;
+            $res['phone'] = $profileData->PHONE;
             $res['profPic'] = $profileData->DOB;
             $res['type'] = 'profile_get';
             return response($res, 200);
