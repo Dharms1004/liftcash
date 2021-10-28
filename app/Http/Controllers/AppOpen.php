@@ -20,7 +20,7 @@ class AppOpen extends Controller
 
         $currentAppVer = env('APP_VERSION_CODE');
 
-        $forceUpdate = $currentAppVer > $request->versionCode ?  true :  false;
+        $forceUpdate = $currentAppVer > $request->versionName ?  true :  false;
 
         $customMessages = [
             'required' => 'Please fill required :attribute'
