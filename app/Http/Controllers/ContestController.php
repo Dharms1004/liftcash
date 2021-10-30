@@ -54,7 +54,7 @@ class ContestController extends Controller
             "contestDetails" => $activeContest->CONTEST_DESCRIPTION,
             "contestBanner" => $activeContest->CONTEST_IMAGE_LINK,
             "contestTerms" => $activeContest->CONTEST_TERMS_CONDITIONS,
-            "contestQuestion" => $contestQuestionsRes
+            "contestQuestion" => [$contestQuestionsRes]
         ];
         $res['status'] = '200';
         $res['message'] = 'Success';
