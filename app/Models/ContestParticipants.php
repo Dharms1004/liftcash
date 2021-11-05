@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ContestParticipants extends Model
 {
     protected $table = 'contest_participants';
-    // const UPDATED_AT = 'PARTICIPATED_DATE';
     public $timestamps = false;
     protected $primaryKey = 'PARTICIPATION_ID';
+
+    protected $fillable = ['PARTICIPATION_ID','CONTEST_ID','USER_ID', 'ANSWER', 'STATUS'];
 
 }

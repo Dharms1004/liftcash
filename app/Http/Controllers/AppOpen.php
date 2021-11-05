@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterTransactionHistory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use App\Models\UserWallet;
+use App\Models\UserMapping;
 use DB;
+use App\Traits\common_methods;
 
 class AppOpen extends Controller
 {
+    use common_methods;
+
     public function getUserAppOpen(Request $request)
     {
         $rules = [
@@ -19,7 +24,7 @@ class AppOpen extends Controller
         ];
 
         $currentAppVer = env('APP_VERSION_CODE');
-        
+
         $forceUpdate = $currentAppVer > $request->versionName ?  true :  false;
 
         $customMessages = [
@@ -30,7 +35,11 @@ class AppOpen extends Controller
         $userId = $request->input('userId');
         $token  = $request->input('api_token');
 
-        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.REFFER_CODE', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.MAIN_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId])->first();
+        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.USER_ID', 'users.REFFER_CODE', 'users.REFFER_ID', 'users.CREATED_AT', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.MAIN_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId])->first();
+
+        /**check user consistence and credit bonus to both user and refferer */
+        $this->creditBonusToReffererAndUser($userBalance);
+
 
         if ($userBalance) {
             $res['status'] = '200';
@@ -48,6 +57,103 @@ class AppOpen extends Controller
             $res['message'] = 'Failed';
             $res['type'] = 'app_open_failed';
             return response($res);
+        }
+    }
+
+    public function creditBonusToReffererAndUser($user){
+
+        /**check if signup bonus not availed */
+        $signUpBonus = MasterTransactionHistory::select('*')->where(['TRANSACTION_TYPE_ID' => 4, 'TRANSACTION_STATUS_ID' => 1, 'USER_ID' => $user->USER_ID])->first();
+        $reffererBonus = UserMapping::where(['REFERRER_USER_ID' => $user->REFFER_ID,'REFERRAL_USER_ID' => $user->USER_ID])->get();
+        $reffererBonusCount = isset($reffererBonus->BONUS_STATUS) ? $reffererBonus->BONUS_STATUS : "";
+
+        if(!$signUpBonus){
+
+            $bonusAmount = env("SIGNUP_BONUS");
+            $userBalance = $this->getUserBalance($user->USER_ID); /** get user's current balance */
+
+            date_default_timezone_set('Asia/Kolkata');
+            $currentDate = date('Y-m-d H:i:s');
+
+            $internalRefNo = "111" . $user->USER_ID;
+            $internalRefNo = $internalRefNo . mt_rand(100, 999);
+            $internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+            $internalRefNo = $internalRefNo . mt_rand(100, 999);
+
+            $currentTotBalance = $userBalance->BALANCE;
+            $closingTotBalance = $currentTotBalance + $bonusAmount;
+
+            $transData = [
+                "USER_ID" => $user->USER_ID,
+                "BALANCE_TYPE_ID" => 1,
+                "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
+                "TRANSACTION_TYPE_ID" => 4, /** for coins credited For SignUp Bonus */
+                "PAYOUT_COIN" => $bonusAmount,
+                "PAYOUT_EMIAL" => "",
+                "PAY_MODE" => "",
+                "INTERNAL_REFERENCE_NO" => $internalRefNo,
+                "PAYOUT_NUMBER" => "",
+                "CURRENT_TOT_BALANCE" => $currentTotBalance,
+                "CLOSING_TOT_BALANCE" => $closingTotBalance,
+                "TRANSACTION_DATE" => $currentDate
+            ];
+
+            $this->creditOrDebitCoinsToUser($transData);
+
+
+            /**credit refferal bonus */
+            if(!empty($user->REFFER_ID && $reffererBonusCount == 0)){
+                $date1 = new \DateTime($user->CREATED_AT);
+                $date2 = new \DateTime(date('Y-m-d h:m:s'));
+
+                $diff = $date2->diff($date1);
+                $hours = $diff->h;
+                $hours = $hours + ($diff->days*24);
+
+                if($hours >= 24){
+
+                    $userBalance = $this->getUserBalance($user->REFFER_ID); /** get user's current balance */
+
+                    $bonusAmount = env('REFFERAL_BONUS'); /**get bonus amount to be credit */
+
+                    /**calculate opening closing balance */
+                    $currentTotBalance = $userBalance->BALANCE;
+                    $closingTotBalance = $currentTotBalance + $bonusAmount;
+
+                    date_default_timezone_set('Asia/Kolkata');
+                    $currentDate = date('Y-m-d H:i:s');
+
+                    $internalRefNo = "111" . $user->REFFER_ID;
+                    $internalRefNo = $internalRefNo . mt_rand(100, 999);
+                    $internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+                    $internalRefNo = $internalRefNo . mt_rand(100, 999);
+
+                        $transData = [
+                            "USER_ID" => $user->REFFER_ID,
+                            "BALANCE_TYPE_ID" => 1,
+                            "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
+                            "TRANSACTION_TYPE_ID" => 7, /** for refferal bonus credit */
+                            "PAYOUT_COIN" => $bonusAmount,
+                            "PAYOUT_EMIAL" => "",
+                            "PAY_MODE" => "",
+                            "INTERNAL_REFERENCE_NO" => $internalRefNo,
+                            "PAYOUT_NUMBER" => "",
+                            "CURRENT_TOT_BALANCE" => $currentTotBalance,
+                            "CLOSING_TOT_BALANCE" => $closingTotBalance,
+                            "TRANSACTION_DATE" => $currentDate
+                        ];
+
+                        $userNewBalance = $userBalance->BALANCE + $bonusAmount;
+                        $userNewPromoBalance = $userBalance->PROMO_BALANCE + $bonusAmount;
+
+                    $this->creditOrDebitCoinsToUser($transData);
+                    $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $user->REFFER_ID);
+
+                    UserMapping::where(['REFERRER_USER_ID' => $user->REFFER_ID,'REFERRAL_USER_ID' => $user->USER_ID])->update(['BONUS_STATUS' => 1]);
+
+
+                }
+            }
         }
     }
 }
