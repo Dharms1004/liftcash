@@ -34,6 +34,10 @@ class ContestController extends Controller
 
     $contestQuestions = ContestQuestions::where('CONTEST_ID', $activeContest->CONTEST_ID)->get();
 
+    $completedToday = ContestParticipants::where(['USER_ID' => $check_token->USER_ID, 'STATUS' => '1', 'CONTEST_ID' => $activeContest->CONTEST_ID])->whereDate('PARTICIPATED_DATE', date('Y-m-d'))->first();
+
+    $contestCompletedOnSameDay = empty($completedToday) ? true : false;
+
     foreach($contestQuestions as $i => $question){
         $contestQuestionsRes[] =  [
             "questionId" => $question->QUESTION_ID,
@@ -48,11 +52,12 @@ class ContestController extends Controller
     if(!empty($activeContest)){
         $res['contest']['data'] = [
             "contestId" => $activeContest->CONTEST_ID,
+            "contestStatus" => $contestCompletedOnSameDay,
             "contestType" => "free",
             "contestName" => $activeContest->CONTEST_NAME,
             "contestTitle" => $activeContest->CONTEST_TITLE,
             "contestDetails" => $activeContest->CONTEST_DESCRIPTION,
-            "contestBanner" => env('GAME_URL').$activeContest->CONTEST_IMAGE_LINK,
+            "contestBanner" => env('CONTEST_URL').$activeContest->CONTEST_IMAGE_LINK,
             "contestTerms" => $activeContest->CONTEST_TERMS_CONDITIONS,
             "contestQuestion" => [$contestQuestionsRes]
         ];
@@ -64,7 +69,7 @@ class ContestController extends Controller
 
     }else{
         $res['status'] = false;
-        $res['message'] = "unable to fetch details";
+        $res['message'] = "No contest running";
         $res['type'] = 'some_error_occured';
         return response($res);
     }
@@ -90,9 +95,11 @@ class ContestController extends Controller
 
     if($check_token->USER_ID){
 
-        $submittedAnswer = ContestParticipants::where(['CONTEST_ID' => 1, 'USER_ID' => $check_token->USER_ID])->whereDate('PARTICIPATED_DATE',"2021-11-05")->first();
+        $submittedAnswer = ContestParticipants::where(['CONTEST_ID' => 1, 'USER_ID' => $check_token->USER_ID])->whereDate('PARTICIPATED_DATE',date('Y-m-d'))->first();
 
-        if($submittedAnswer->STATUS == 0){
+        $attempStatus = isset($submittedAnswer->STATUS) ? $submittedAnswer->STATUS : 0;
+
+        if($attempStatus == 0){
 
             $newans = [$request->question_id => $request->answer];
 
@@ -108,7 +115,7 @@ class ContestController extends Controller
             $newAns = ContestParticipants::updateOrCreate([
                 'CONTEST_ID'   => $request->get('contest_id'),
                 'USER_ID'   => $check_token->USER_ID,
-                'PARTICIPATED_DATE'   => $submittedAnswer->PARTICIPATED_DATE,
+                'PARTICIPATED_DATE'   => $submittedAnswer->PARTICIPATED_DATE ?? date('Y-m-d'),
             ],[
                 'ANSWER'     => $answer,
                 'STATUS' => $status
