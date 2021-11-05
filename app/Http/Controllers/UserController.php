@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Models\UserWallet;
+use App\Models\UserMapping;
 use App\Traits\common_methods;
 
 class UserController extends Controller
@@ -94,7 +95,7 @@ class UserController extends Controller
 
                         /**credit refferal bonus */
                         if(!empty($refferId)){
-                            $this->creditRefferalBonusToUser($refferId);
+                            $this->mapReffererUser($refferId, $userCreate->id);
                         }
 
                         $res['status'] = '200';
@@ -154,10 +155,12 @@ class UserController extends Controller
     public function createUserWallet($userId)
     {
 
-        $bonusAmount = env("SIGNUP_BONUS");
+        $bonusAmount = 0;
 
         $userWalletCreate = UserWallet::create([
             'BALANCE_TYPE' => 1,
+            'PROMO_BALANCE' => $bonusAmount,
+            'MAIN_BALANCE' => 0,
             'BALANCE' => $bonusAmount,
             'CREATED_DATE' => date("Y-m-d h:i:s"),
             'USER_ID' => $userId
@@ -178,7 +181,7 @@ class UserController extends Controller
             "USER_ID" => $userId,
             "BALANCE_TYPE_ID" => 1,
             "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
-            "TRANSACTION_TYPE_ID" => 4, /** for coins credited For SignUp Bonus */
+            "TRANSACTION_TYPE_ID" => 10, /** for wallet created */
             "PAYOUT_COIN" => $bonusAmount,
             "PAYOUT_EMIAL" => "",
             "PAY_MODE" => "",
@@ -251,6 +254,23 @@ class UserController extends Controller
 
         }catch(\Illuminate\Database\QueryException $e){
            return false;
+        }
+
+    }
+
+    public function mapReffererUser($refferId, $userId){
+
+        date_default_timezone_set('Asia/Kolkata');
+		$from = date('Y-m-d 00:00:00');
+		$now = date('Y-m-d H:i:s');
+        $todayRefferer = UserMapping::where(['REFERRER_USER_ID' => $refferId])->whereBetween('REGISTERED_DATE_TIME', [$from, $now])->get();
+
+        if($todayRefferer->count() <= 10){
+
+            $userMapping = UserMapping::create([
+                'REFERRER_USER_ID' => $refferId,
+                'REFERRAL_USER_ID' => $userId
+            ]);
         }
 
     }

@@ -35,7 +35,7 @@ class ContestController extends Controller
     $contestQuestions = ContestQuestions::where('CONTEST_ID', $activeContest->CONTEST_ID)->get();
 
     foreach($contestQuestions as $i => $question){
-        $contestQuestionsRes["Q".$i+1] =  [
+        $contestQuestionsRes[] =  [
             "questionId" => $question->QUESTION_ID,
             "question" => $question->QUESTION,
             "option_a" => $question->OPTION_A,
@@ -52,7 +52,7 @@ class ContestController extends Controller
             "contestName" => $activeContest->CONTEST_NAME,
             "contestTitle" => $activeContest->CONTEST_TITLE,
             "contestDetails" => $activeContest->CONTEST_DESCRIPTION,
-            "contestBanner" => $activeContest->CONTEST_IMAGE_LINK,
+            "contestBanner" => env('GAME_URL').$activeContest->CONTEST_IMAGE_LINK,
             "contestTerms" => $activeContest->CONTEST_TERMS_CONDITIONS,
             "contestQuestion" => [$contestQuestionsRes]
         ];
@@ -86,26 +86,49 @@ class ContestController extends Controller
     $token = $request->input('api_token');
     $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
+    $status = $request->status;
+
     if($check_token->USER_ID){
 
-        $ConParti = new ContestParticipants;
+        $submittedAnswer = ContestParticipants::where(['CONTEST_ID' => 1, 'USER_ID' => $check_token->USER_ID])->whereDate('PARTICIPATED_DATE',"2021-11-05")->first();
 
-        $ConParti->USER_ID = $request->userId;
-        $ConParti->CONTEST_ID = $request->contest_id;
-        $ConParti->Q1 = $request->ans_one;
-        $ConParti->Q2 = $request->ans_two;
-        $ConParti->Q3 = $request->ans_three;
+        if($submittedAnswer->STATUS == 0){
 
-        $result = $ConParti->save();
+            $newans = [$request->question_id => $request->answer];
 
-        if($result){
-            $res['status'] = '200';
-            $res['message'] = 'Success';
-            $res['type'] = 'answer_success';
-            return response($res);
+            if(!empty($submittedAnswer)){
+                $ans = json_decode($submittedAnswer->ANSWER,true);
+                $ans += $newans;
+
+                $answer = json_encode($ans);
+            }else{
+                $answer = json_encode($newans);
+            }
+
+            $newAns = ContestParticipants::updateOrCreate([
+                'CONTEST_ID'   => $request->get('contest_id'),
+                'USER_ID'   => $check_token->USER_ID,
+                'PARTICIPATED_DATE'   => $submittedAnswer->PARTICIPATED_DATE,
+            ],[
+                'ANSWER'     => $answer,
+                'STATUS' => $status
+            ]);
+
+            if($newAns){
+                $res['status'] = '200';
+                $res['message'] = 'Success';
+                $res['type'] = 'answer_success';
+                return response($res);
+            }else{
+                $res['status'] = false;
+                $res['message'] = "unable to submit answers";
+                $res['type'] = 'some_error_occured';
+                return response($res);
+            }
+
         }else{
             $res['status'] = false;
-            $res['message'] = "unable to submit answers";
+            $res['message'] = "Contest Allready Completed";
             $res['type'] = 'some_error_occured';
             return response($res);
         }
