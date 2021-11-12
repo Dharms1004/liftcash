@@ -95,7 +95,7 @@ class ContestController extends Controller
 
     if($check_token->USER_ID){
 
-        $submittedAnswer = ContestParticipants::where(['CONTEST_ID' => 1, 'USER_ID' => $check_token->USER_ID])->whereDate('PARTICIPATED_DATE',date('Y-m-d'))->first();
+        $submittedAnswer = ContestParticipants::where(['CONTEST_ID' => $request->contest_id, 'USER_ID' => $check_token->USER_ID])->whereDate('PARTICIPATED_DATE',date('Y-m-d'))->first();
 
         $attempStatus = isset($submittedAnswer->STATUS) ? $submittedAnswer->STATUS : 0;
 
