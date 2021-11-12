@@ -45,57 +45,65 @@ class RedeemCoin extends Controller
         $amountToBeDedictInMain = $coinsToBeRedeem/2;
         $amountToBeDedictInPromo = $coinsToBeRedeem/2;
 
-        $currentTotBalance = $userBalance->BALANCE;
-        $currentMainBalance = $userBalance->MAIN_BALANCE - $amountToBeDedictInMain;
-        $currentPromoBalance = $userBalance->PROMO_BALANCE - $amountToBeDedictInPromo;
-        $closingTotBalance = $currentTotBalance - $coinsToBeRedeem;
+        if($userBalance->BALANCE >= $coinsToBeRedeem && $userBalance->MAIN_BALANCE >= $amountToBeDedictInMain && $userBalance->PROMO_BALANCE >= $amountToBeDedictInPromo){
 
+            $currentTotBalance = $userBalance->BALANCE;
+            $currentMainBalance = $userBalance->MAIN_BALANCE - $amountToBeDedictInMain;
+            $currentPromoBalance = $userBalance->PROMO_BALANCE - $amountToBeDedictInPromo;
+            $closingTotBalance = $currentTotBalance - $coinsToBeRedeem;
 
-        date_default_timezone_set('Asia/Kolkata');
-		$currentDate = date('Y-m-d H:i:s');
+            date_default_timezone_set('Asia/Kolkata');
+            $currentDate = date('Y-m-d H:i:s');
 
-        $internalRefNo = "111" . $check_token->USER_ID;
-		$internalRefNo = $internalRefNo . mt_rand(100, 999);
-		$internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
-		$internalRefNo = $internalRefNo . mt_rand(100, 999);
+            $internalRefNo = "111" . $check_token->USER_ID;
+            $internalRefNo = $internalRefNo . mt_rand(100, 999);
+            $internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+            $internalRefNo = $internalRefNo . mt_rand(100, 999);
 
-        if ($userBalance->BALANCE >= $coinsToBeRedeem) {
-            try{
-                $transData = [
-                    "USER_ID" => $check_token->USER_ID,
-                    "BALANCE_TYPE_ID" => 1,
-                    "TRANSACTION_STATUS_ID" => 6, /** withdraw pending */
-                    "TRANSACTION_TYPE_ID" => 6, /** withdraw request */
-                    "PAYOUT_COIN" => $coinsToBeRedeem,
-                    "PAYOUT_EMIAL" => $payoutEmail,
-                    "PAY_MODE" => $paymentMode,
-                    "INTERNAL_REFERENCE_NO" => $internalRefNo,
-                    "PAYOUT_NUMBER" => $payoutNumber,
-                    "FREEFIRE_ID" => $freefireId,
-                    "CURRENT_TOT_BALANCE" => $currentTotBalance,
-                    "CLOSING_TOT_BALANCE" => $closingTotBalance,
-                    "TRANSACTION_DATE" => $currentDate
-                ];
+            if ($userBalance->BALANCE >= $coinsToBeRedeem) {
+                try{
+                    $transData = [
+                        "USER_ID" => $check_token->USER_ID,
+                        "BALANCE_TYPE_ID" => 1,
+                        "TRANSACTION_STATUS_ID" => 6, /** withdraw pending */
+                        "TRANSACTION_TYPE_ID" => 6, /** withdraw request */
+                        "PAYOUT_COIN" => $coinsToBeRedeem,
+                        "PAYOUT_EMIAL" => $payoutEmail,
+                        "PAY_MODE" => $paymentMode,
+                        "INTERNAL_REFERENCE_NO" => $internalRefNo,
+                        "PAYOUT_NUMBER" => $payoutNumber,
+                        "FREEFIRE_ID" => $freefireId,
+                        "CURRENT_TOT_BALANCE" => $currentTotBalance,
+                        "CLOSING_TOT_BALANCE" => $closingTotBalance,
+                        "TRANSACTION_DATE" => $currentDate
+                    ];
 
-                $this->creditOrDebitCoinsToUser($transData);
+                    $this->creditOrDebitCoinsToUser($transData);
 
-                $this->updateUserFinalBalance($currentMainBalance, $currentPromoBalance, $closingTotBalance, $check_token->USER_ID);
+                    $this->updateUserFinalBalance($currentMainBalance, $currentPromoBalance, $closingTotBalance, $check_token->USER_ID);
 
-                $res['status'] = '200';
-                $res['message'] = 'Success';
-                $res['type'] = 'withdraw_success';
-                return response($res);
+                    $res['status'] = '200';
+                    $res['message'] = 'Success';
+                    $res['type'] = 'withdraw_success';
+                    return response($res);
 
-            }catch(\Illuminate\Database\QueryException $e){
+                }catch(\Illuminate\Database\QueryException $e){
+                    $res['status'] = false;
+                    $res['message'] = $e;
+                    $res['type'] = 'some_error_occured';
+                    return response($res);
+                }
+            } else {
                 $res['status'] = false;
-                $res['message'] = $e;
-                $res['type'] = 'some_error_occured';
+                $res['message'] = 'Failed';
+                $res['type'] = 'user_transaction_failed';
                 return response($res);
             }
-        } else {
+
+        }else {
             $res['status'] = false;
             $res['message'] = 'Failed';
-            $res['type'] = 'user_transaction_failed';
+            $res['type'] = 'insufficient_balance_in_user_account';
             return response($res);
         }
     }

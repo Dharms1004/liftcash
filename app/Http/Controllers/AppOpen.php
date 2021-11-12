@@ -40,7 +40,6 @@ class AppOpen extends Controller
         /**check user consistence and credit bonus to both user and refferer */
         $this->creditBonusToReffererAndUser($userBalance);
 
-
         if ($userBalance) {
             $res['status'] = '200';
             $res['message'] = 'Success';
@@ -67,9 +66,9 @@ class AppOpen extends Controller
         $reffererBonus = UserMapping::where(['REFERRER_USER_ID' => $user->REFFER_ID,'REFERRAL_USER_ID' => $user->USER_ID])->get();
         $reffererBonusCount = isset($reffererBonus->BONUS_STATUS) ? $reffererBonus->BONUS_STATUS : "";
 
-        if(!$signUpBonus){
-
+        if(empty($signUpBonus)){
             $bonusAmount = env("SIGNUP_BONUS");
+
             $userBalance = $this->getUserBalance($user->USER_ID); /** get user's current balance */
 
             date_default_timezone_set('Asia/Kolkata');
@@ -99,6 +98,11 @@ class AppOpen extends Controller
             ];
 
             $this->creditOrDebitCoinsToUser($transData);
+
+            $userNewBalance = $userBalance->BALANCE + $bonusAmount;
+            $userNewPromoBalance = $userBalance->PROMO_BALANCE + $bonusAmount;
+
+            $this->updateUserBalance($userNewBalance, $userNewPromoBalance, $user->USER_ID);
 
 
             /**credit refferal bonus */

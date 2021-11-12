@@ -39,3 +39,4 @@ $router->get('/offerComplete', 'OfferTracking@index');
 $router->post('/getGames', ['middleware' => 'auth', 'uses' => 'Games@getAllGames']);
 $router->post('/getActiveContest', ['middleware' => 'auth', 'uses' => 'ContestController@index']);
 $router->post('/submitContestAnswer', ['middleware' => 'auth', 'uses' => 'ContestController@contestAnswer']);
+$router->post('/getLeaderBoardRanking', ['middleware' => 'auth', 'uses' => 'LeaderBoardController@index']);
