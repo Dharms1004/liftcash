@@ -34,9 +34,12 @@ $router->post('/scratchCard', ['middleware' => 'auth', 'uses' =>  'UserContest@s
 $router->post('/diesRoller', ['middleware' => 'auth', 'uses' =>  'UserContest@diesRoller']);
 $router->post('/watchVideo', ['middleware' => 'auth', 'uses' =>  'UserContest@watchVideo']);
 $router->post('/redeemCash', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@withdrawAmount']);
+$router->post('/convertDiamondToCoin', ['middleware' => 'auth', 'uses' =>  'RedeemCoin@transferDiamond']);
 $router->post('/contestCounter', ['middleware' => 'auth', 'uses' =>  'ContestCounter@index']);
 $router->get('/offerComplete', 'OfferTracking@index');
 $router->post('/getGames', ['middleware' => 'auth', 'uses' => 'Games@getAllGames']);
 $router->post('/getActiveContest', ['middleware' => 'auth', 'uses' => 'ContestController@index']);
 $router->post('/submitContestAnswer', ['middleware' => 'auth', 'uses' => 'ContestController@contestAnswer']);
 $router->post('/getLeaderBoardRanking', ['middleware' => 'auth', 'uses' => 'LeaderBoardController@index']);
+$router->post('/getVideos', ['middleware' => 'auth', 'uses' => 'VideoListing@getAllVideos']);
+$router->post('/getMiniBanner', ['middleware' => 'auth', 'uses' => 'MiniBanner@getAllBanners']);

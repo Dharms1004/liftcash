@@ -9,6 +9,7 @@ use App\Models\UserWallet;
 use App\Models\UserMapping;
 use DB;
 use App\Traits\common_methods;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class AppOpen extends Controller
 {
@@ -35,9 +36,21 @@ class AppOpen extends Controller
         $userId = $request->input('userId');
         $token  = $request->input('api_token');
 
-        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.USER_ID', 'users.REFFER_CODE', 'users.REFFER_ID', 'users.CREATED_AT', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.MAIN_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId])->first();
-
+        $userBalance = DB::table('users')->join('user_wallet', 'users.USER_ID', '=', 'user_wallet.USER_ID')->select('users.USER_ID', 'users.REFFER_CODE', 'users.REFFER_ID', 'users.CREATED_AT', 'user_wallet.BALANCE as userCoin', 'user_wallet.PROMO_BALANCE as userPromoCoin',  'user_wallet.MAIN_BALANCE as userMainCoin')->where(['users.USER_ID' => $userId, 'user_wallet.COIN_TYPE' => 1])->first();
+        $userDiamond = DB::table('user_wallet')->select('BALANCE as userDiamond')->where(['USER_ID' => $userId, 'COIN_TYPE' => 2])->first();
         /**check user consistence and credit bonus to both user and refferer */
+        $popData = DB::table('headings')->select('HEADING', 'MESSAGE', 'THUMBNAIL', 'ACTION_URL')->first();
+        $popArray = array();
+        
+        if($popData){
+            $popArray = [
+                'heading' => $popData->HEADING,
+                'message' => $popData->MESSAGE,
+                'image' => $popData->THUMBNAIL,
+                'url' => $popData->ACTION_URL,
+            ];
+        }
+        
         $this->creditBonusToReffererAndUser($userBalance);
 
         if ($userBalance) {
@@ -49,6 +62,9 @@ class AppOpen extends Controller
             $res['userCoin'] = $userBalance->userCoin;
             $res['userPromoCoin'] = $userBalance->userPromoCoin;
             $res['userMainCoin'] = $userBalance->userMainCoin;
+            $res['userDiamond'] = $userDiamond->userDiamond ?? 0;
+            $res['popUp'] = env('HOME_PAGE_POPUP');
+            $res['popData'] = $popArray;
             $res['type'] = 'app_open';
             return response($res, 200);
         } else {
