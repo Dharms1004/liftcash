@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Users;
 use App\Models\UserWallet;
 use App\Models\MasterTransactionHistory;
+use App\Models\MasterTransactionHistoryDiamond;
 use DB;
 use DateTime;
 
@@ -12,7 +13,22 @@ trait common_methods
 {
     public function getUserBalance($userId){
 
-        return UserWallet::select("BALANCE","PROMO_BALANCE","MAIN_BALANCE")->where(['USER_ID' => $userId])->first();
+        return UserWallet::select("BALANCE","PROMO_BALANCE","MAIN_BALANCE")->where(['USER_ID' => $userId, 'COIN_TYPE' => 1])->first();
+    }
+
+    public function getUserDiamondBalance($userId){
+
+        return UserWallet::select("BALANCE","PROMO_BALANCE","MAIN_BALANCE")->where(['USER_ID' => $userId, 'COIN_TYPE' => 2])->first();
+    }
+
+    public function updateUserDiamondMain($mainBalance, $promoBalance, $totBalance, $userId)
+    {
+        UserWallet::where(['USER_ID' => $userId, 'COIN_TYPE' => 2])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance, 'PROMO_BALANCE' => $promoBalance]);
+    }
+
+    public function creditOrDebitDiamondToUser($data)
+    {
+        MasterTransactionHistoryDiamond::insert($data);
     }
 
     public function creditOrDebitCoinsToUser($data)
@@ -22,17 +38,17 @@ trait common_methods
 
     public function updateUserBalance($totBalance ,$userNewPromoBalance ,$userId)
     {
-        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'PROMO_BALANCE' => $userNewPromoBalance]);
+        UserWallet::where(['USER_ID' => $userId, 'COIN_TYPE' => 1])->update(['BALANCE' => $totBalance, 'PROMO_BALANCE' => $userNewPromoBalance]);
     }
 
     public function updateUserBalanceMain($totBalance, $mainBalance, $userId)
     {
-        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance]);
+        UserWallet::where(['USER_ID' => $userId, 'COIN_TYPE' => 1])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance]);
     }
 
     public function updateUserFinalBalance($mainBalance, $promoBalance, $totBalance, $userId)
     {
-        UserWallet::where(['USER_ID' => $userId])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance, 'PROMO_BALANCE' => $promoBalance]);
+        UserWallet::where(['USER_ID' => $userId, 'COIN_TYPE' => 1])->update(['BALANCE' => $totBalance, 'MAIN_BALANCE' => $mainBalance, 'PROMO_BALANCE' => $promoBalance]);
     }
 
     public function getOpeningClosingBalace($userId)
@@ -56,10 +72,21 @@ trait common_methods
         $spinTransactionTypeId = 1;
         $spinTransactionStatusSuccess = 1;
 
-       return DB::table('master_transaction_history')
+        $spinTransactionTypeIdDiamond = 10;
+        $spinTransactionStatusSuccessDiamond = 10;
+
+       $count = DB::table('master_transaction_history')
             ->where(["USER_ID" => $userId, "TRANSACTION_TYPE_ID" => $spinTransactionTypeId, "TRANSACTION_STATUS_ID" => $spinTransactionStatusSuccess])
             ->whereBetween('TRANSACTION_DATE',[$startTime, $endTime])
             ->count();
+
+        $countDiamond = DB::table('master_transaction_history_diamond')
+            ->where(["USER_ID" => $userId, "TRANSACTION_TYPE_ID" => $spinTransactionTypeIdDiamond, "TRANSACTION_STATUS_ID" => $spinTransactionStatusSuccessDiamond])
+            ->whereBetween('TRANSACTION_DATE',[$startTime, $endTime])
+            ->count();
+
+        return $countDiamond + $count;
+        
     }
 
     public function getScratchCardLimit($userId){

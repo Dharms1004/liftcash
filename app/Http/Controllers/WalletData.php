@@ -31,6 +31,7 @@ class WalletData extends Controller
         $token = $request->input('api_token');
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
         $WalletData = $this->getUserBalance($userId);
+        $userDiamond = DB::table('user_wallet')->select('BALANCE as userDiamond')->where(['USER_ID' => $userId, 'COIN_TYPE' => 2])->first();
         $payOutValues = env('PAYOUT_VALUES');
         $payOutValues = explode("|", $payOutValues);
         if (!empty($WalletData)) {
@@ -42,6 +43,7 @@ class WalletData extends Controller
             $res['threshold'] = $WalletData->BALANCE;
             $res['promoCoin'] = $WalletData->PROMO_BALANCE;
             $res['mainCoin'] = $WalletData->MAIN_BALANCE;
+            $res['userDiamond'] = $userDiamond->userDiamond ?? 0;
             $res['payoutValues'] = $payOutValues;
             $res['thresholdValue'] = env('THRESHOLD_VALUES');
             return response($res, 200);
