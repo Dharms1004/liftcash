@@ -156,8 +156,10 @@ class UserController extends Controller
     {
 
         $bonusAmount = 0;
+        date_default_timezone_set('Asia/Kolkata');
 
-        $userWalletCreate = UserWallet::create([
+        UserWallet::insert([
+            'COIN_TYPE' => 1,
             'BALANCE_TYPE' => 1,
             'PROMO_BALANCE' => $bonusAmount,
             'MAIN_BALANCE' => 0,
@@ -166,7 +168,16 @@ class UserController extends Controller
             'USER_ID' => $userId
         ]);
 
-        date_default_timezone_set('Asia/Kolkata');
+        UserWallet::insert([
+            'COIN_TYPE' => 2,
+            'BALANCE_TYPE' => 2,
+            'PROMO_BALANCE' => 0,
+            'MAIN_BALANCE' => 0,
+            'BALANCE' => 0,
+            'CREATED_DATE' => date("Y-m-d h:i:s"),
+            'USER_ID' => $userId
+        ]);
+
 		$currentDate = date('Y-m-d H:i:s');
 
         $internalRefNo = "111" . $userId;
@@ -192,7 +203,24 @@ class UserController extends Controller
             "TRANSACTION_DATE" => $currentDate
         ];
 
+        $transDataDia = [
+            "USER_ID" => $userId,
+            "BALANCE_TYPE_ID" => 1,
+            "TRANSACTION_STATUS_ID" => 1, /** for coins credited succesfully */
+            "TRANSACTION_TYPE_ID" => 10, /** for wallet created */
+            "PAYOUT_COIN" => 0,
+            "PAYOUT_EMIAL" => "",
+            "PAY_MODE" => "",
+            "INTERNAL_REFERENCE_NO" => $internalRefNo,
+            "PAYOUT_NUMBER" => "",
+            "CURRENT_TOT_BALANCE" => 0,
+            "CLOSING_TOT_BALANCE" => 0,
+            "TRANSACTION_DATE" => $currentDate
+        ];
+
         $this->creditOrDebitCoinsToUser($transData);
+        $this->creditOrDebitDiamondToUser($transDataDia);
+        
     }
 
     // This function will return a random
