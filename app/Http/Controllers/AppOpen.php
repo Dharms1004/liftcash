@@ -46,7 +46,7 @@ class AppOpen extends Controller
             $popArray = [
                 'heading' => $popData->HEADING,
                 'message' => $popData->MESSAGE,
-                'image' => $popData->THUMBNAIL,
+                'image' => env('POPUP_URL').$popData->THUMBNAIL,
                 'url' => $popData->ACTION_URL,
                 'is_button' => $popData->IS_BUTTON == 1 ? true : false
             ];

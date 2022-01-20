@@ -18,7 +18,7 @@ class MiniBanner extends Controller
             foreach ($banners as $banner) {
 
                 $res['bannerTitle'] = $banner->HEADING;
-                $res['bannerImage'] = env('BANNER_URL').$banner->THUMBNAIL;
+                $res['bannerImage'] = env('BANNERS_URL').$banner->THUMBNAIL;
                 $res['bannerUrl'] = $banner->ACTION_URL;
                 $res['type'] = 'get_all_banners';
                 $allBanners[] = $res;

@@ -12,7 +12,7 @@ class VideoListing extends Controller
 {
     public function getAllVideos(Request $request)
     {
-        $videos = DB::table('video_listing')->get();
+        $videos = DB::table('video_listing')->orderBy('id','DESC')->get();
 
         if (count($videos)) {
             foreach ($videos as $video) {

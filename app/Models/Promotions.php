@@ -11,7 +11,7 @@ use Laravel\Lumen\Auth\Authorizable;
 
 class UserWallet extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    protected $table = 'promotions';
+    protected $table = 'user_wallet';
     public $timestamps = false;
     use Authenticatable, Authorizable, HasFactory;
 
@@ -21,7 +21,7 @@ class UserWallet extends Model implements AuthenticatableContract, AuthorizableC
      * @var array
      */
     protected $fillable = [
-        'USER_ID', 'PROMOTION_TYPE', 'PROMOTION_CATEGORY', 'PROMOTION_NAME', 'PROMOTION_DETAILS', 'PROMOTION_STEPS', 'PROMOTION_THUMBNAIL', 'PROMOTION_BANNER', 'PROMOTION_URL','PROMOTION_OS','PROMOTION_ORIGIN','CAP','STARTS_FROM','ENDS_ON','STATUS','PROMOTION_APP','CREATED_BY'
+        'COIN_TYPE', 'BALANCE_TYPE', 'MAIN_BALANCE', 'PROMO_BALANCE', 'BALANCE','CREATED_DATE','USER_ID','UPDATE_DATE'
     ];
 
     /**

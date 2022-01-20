@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use App\User as AppUser;
 
 class Profile extends Controller
 {
     public function update(Request $request)
     {
         $rules = [
-            //'userId' => 'required|max:10',
             'phone' => 'required|digits:10',
             'locale' => 'required',
             'userName' => 'required',
@@ -23,8 +23,29 @@ class Profile extends Controller
         $customMessages = [
             'required' => 'Please fill required :attribute'
         ];
+
+
+
         $this->validate($request, $rules, $customMessages);
         $token = $request->input('api_token');
+
+        $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+        
+        $refferalIdExist = User::select('REFFER_ID')->where('USER_ID', $check_token->USER_ID)->first();
+
+        $refferalCode = $request->input('refferal_code') ? $request->input('refferal_code') : null;
+
+        if(empty($refferalIdExist->REFFER_ID)){
+            if($refferalCode){
+                $refferData = User::select('USER_ID')->where('REFFER_CODE', $refferalCode)->first();
+                $refferId = $refferData->USER_ID;
+            }else{
+                $refferId = null;
+            }
+        }else{
+            $refferId = $refferalIdExist->REFFER_ID;
+        }
+        
         $phone = $request->input('phone');
         $locale = $request->input('locale');
         $userName = $request->input('userName');
@@ -35,7 +56,6 @@ class Profile extends Controller
         $city = $request->input('city');
         $state = $request->input('state');
         $country = $request->input('country');
-        $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
         $profileUpdate = User::where('USER_ID', $check_token->USER_ID)->update([
             'PHONE' => $phone,
             'USER_LOCALE' => $locale,
@@ -47,6 +67,8 @@ class Profile extends Controller
             'COUNTRY_CODE' => $country,
             'CITY' => $city,
             'STATE' => $state,
+            'REFFER_ID' => $refferId,
+            
         ]);
         $userData = User::where('API_TOKEN', $token)->select( 'USER_ID', 'PHONE', 'SOCIAL_EMAIL', 'DEVICE_TYPE', 'DEVICE_ID', 'SOCIAL_TYPE', 'SOCIAL_NAME', 'USER_NAME', 'OCCUPATION', 'DOB', 'PROFILE_PIC', 'GENDER', 'COUNTRY_CODE', 'USER_LOCALE', 'QUALIFICATION', 'STATE')->first();
 
