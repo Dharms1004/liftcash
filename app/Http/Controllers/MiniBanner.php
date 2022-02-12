@@ -12,7 +12,7 @@ class MiniBanner extends Controller
 {
     public function getAllBanners(Request $request)
     {
-        $banners = DB::table('mini_banner')->get();
+        $banners = DB::table('mini_banner')->where('STATUS', 1)->get();
 
         if (count($banners)) {
             foreach ($banners as $banner) {

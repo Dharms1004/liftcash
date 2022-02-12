@@ -43,3 +43,8 @@ $router->post('/submitContestAnswer', ['middleware' => 'auth', 'uses' => 'Contes
 $router->post('/getLeaderBoardRanking', ['middleware' => 'auth', 'uses' => 'LeaderBoardController@index']);
 $router->post('/getVideos', ['middleware' => 'auth', 'uses' => 'VideoListing@getAllVideos']);
 $router->post('/getMiniBanner', ['middleware' => 'auth', 'uses' => 'MiniBanner@getAllBanners']);
+
+
+//without Auth
+$router->post('/offerListOpen',['uses' =>  'Offers@getAllOffer']);
+$router->post('/offerDetailsOpen', ['uses' =>  'Offers@getOfferDetails']);
