@@ -33,7 +33,7 @@ class UserContest extends Controller
 
         $getSpinLimit = $this->getSpinLimit($check_token->USER_ID); /** get user's spin count balance */
 
-        if ($request->input('type') == 'coin') {
+        if ($request->input('type') == 'coin' || $request->input('type') == 'diamond') {
             $userBalance = $this->getUserBalance($check_token->USER_ID); /** get user's current balance */
     
             $spinLimit = env('SPIN_LIMIT');
@@ -94,66 +94,67 @@ class UserContest extends Controller
                 $res['totalAttempts'] = $getSpinLimit;
                 return response($res);
             }
-        }else{
-            $userBalance = $this->getUserDiamondBalance($check_token->USER_ID); /** get user's current balance */
-            $spinLimit = env('SPIN_LIMIT');
-
-            $currentTotBalance = $userBalance->BALANCE;
-            $currentMainBalance = $userBalance->MAIN_BALANCE + $coinsToBeCredit;
-            $currentPromoBalance = $userBalance->PROMO_BALANCE;
-            $closingTotBalance = $currentMainBalance + $currentPromoBalance;
-    
-            date_default_timezone_set('Asia/Kolkata');
-            $currentDate = date('Y-m-d H:i:s');
-    
-            $internalRefNo = "111" . $check_token->USER_ID;
-            $internalRefNo = $internalRefNo . mt_rand(100, 999);
-            $internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
-            $internalRefNo = $internalRefNo . mt_rand(100, 999);
-    
-            if($getSpinLimit <= $spinLimit){
-    
-                try{
-                    $transData = [
-                        "USER_ID" => $check_token->USER_ID,
-                        "BALANCE_TYPE_ID" => 1,
-                        "TRANSACTION_STATUS_ID" => 10, /** for diamond credited succesfully */
-                        "TRANSACTION_TYPE_ID" => 10, /** for diamond credited from spin wheel */
-                        "PAYOUT_COIN" => $coinsToBeCredit,
-                        "PAYOUT_EMIAL" => "",
-                        "PAY_MODE" => "",
-                        "INTERNAL_REFERENCE_NO" => $internalRefNo,
-                        "PAYOUT_NUMBER" => "",
-                        "CURRENT_TOT_BALANCE" => $currentTotBalance,
-                        "CLOSING_TOT_BALANCE" => $closingTotBalance,
-                        "TRANSACTION_DATE" => $currentDate
-                    ];
-                    
-                    $this->creditOrDebitDiamondToUser($transData);
-                    $this->updateUserDiamondMain($currentMainBalance, $currentPromoBalance, $closingTotBalance, $check_token->USER_ID);
-    
-                    $res['status'] = '200';
-                    $res['message'] = 'Success';
-                    $res['type'] = 'Spin_wheel_success';
-                    $res['totalAttempts'] = $getSpinLimit + 1;
-                    return response($res);
-    
-                }catch(\Illuminate\Database\QueryException $e){
-                    $res['status'] = false;
-                    $res['message'] = $e;
-                    $res['type'] = 'some_error_occured';
-                    $res['totalAttempts'] = $getSpinLimit;
-                    return response($res);
-                }
-    
-            }else{
-                $res['status'] = false;
-                $res['message'] = 'Failed';
-                $res['type'] = 'spin_limit_exhausted';
-                $res['totalAttempts'] = $getSpinLimit;
-                return response($res);
-            }
         }
+        // else{
+        //     $userBalance = $this->getUserDiamondBalance($check_token->USER_ID); /** get user's current balance */
+        //     $spinLimit = env('SPIN_LIMIT');
+
+        //     $currentTotBalance = $userBalance->BALANCE;
+        //     $currentMainBalance = $userBalance->MAIN_BALANCE + $coinsToBeCredit;
+        //     $currentPromoBalance = $userBalance->PROMO_BALANCE;
+        //     $closingTotBalance = $currentMainBalance + $currentPromoBalance;
+    
+        //     date_default_timezone_set('Asia/Kolkata');
+        //     $currentDate = date('Y-m-d H:i:s');
+    
+        //     $internalRefNo = "111" . $check_token->USER_ID;
+        //     $internalRefNo = $internalRefNo . mt_rand(100, 999);
+        //     $internalRefNo = $internalRefNo . $this->getDateTimeInMicroseconds();
+        //     $internalRefNo = $internalRefNo . mt_rand(100, 999);
+    
+        //     if($getSpinLimit <= $spinLimit){
+    
+        //         try{
+        //             $transData = [
+        //                 "USER_ID" => $check_token->USER_ID,
+        //                 "BALANCE_TYPE_ID" => 1,
+        //                 "TRANSACTION_STATUS_ID" => 10, /** for diamond credited succesfully */
+        //                 "TRANSACTION_TYPE_ID" => 10, /** for diamond credited from spin wheel */
+        //                 "PAYOUT_COIN" => $coinsToBeCredit,
+        //                 "PAYOUT_EMIAL" => "",
+        //                 "PAY_MODE" => "",
+        //                 "INTERNAL_REFERENCE_NO" => $internalRefNo,
+        //                 "PAYOUT_NUMBER" => "",
+        //                 "CURRENT_TOT_BALANCE" => $currentTotBalance,
+        //                 "CLOSING_TOT_BALANCE" => $closingTotBalance,
+        //                 "TRANSACTION_DATE" => $currentDate
+        //             ];
+                    
+        //             $this->creditOrDebitDiamondToUser($transData);
+        //             $this->updateUserDiamondMain($currentMainBalance, $currentPromoBalance, $closingTotBalance, $check_token->USER_ID);
+    
+        //             $res['status'] = '200';
+        //             $res['message'] = 'Success';
+        //             $res['type'] = 'Spin_wheel_success';
+        //             $res['totalAttempts'] = $getSpinLimit + 1;
+        //             return response($res);
+    
+        //         }catch(\Illuminate\Database\QueryException $e){
+        //             $res['status'] = false;
+        //             $res['message'] = $e;
+        //             $res['type'] = 'some_error_occured';
+        //             $res['totalAttempts'] = $getSpinLimit;
+        //             return response($res);
+        //         }
+    
+        //     }else{
+        //         $res['status'] = false;
+        //         $res['message'] = 'Failed';
+        //         $res['type'] = 'spin_limit_exhausted';
+        //         $res['totalAttempts'] = $getSpinLimit;
+        //         return response($res);
+        //     }
+        // }
 
     }
 
