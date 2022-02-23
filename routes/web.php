@@ -48,3 +48,5 @@ $router->post('/getMiniBanner', ['middleware' => 'auth', 'uses' => 'MiniBanner@g
 //without Auth
 $router->post('/offerListOpen',['uses' =>  'Offers@getAllOffer']);
 $router->post('/offerDetailsOpen', ['uses' =>  'Offers@getOfferDetails']);
+
+$router->post('/getNews',['uses' =>  'NewsController@getAllNews']);

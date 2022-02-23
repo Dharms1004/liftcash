@@ -42,6 +42,8 @@ class Offers extends Controller
                 $res['offerInstructions'] = $allOfferData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$allOfferData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$allOfferData->OFFER_BANNER;
+                $res['offerUrl'] = $allOfferData->OFFER_URL;
+                $res['fallbackUrl'] = $allOfferData->FALLBACK_URL;
                 $allOffersData[] = $res;
             }
 
@@ -62,6 +64,8 @@ class Offers extends Controller
                 $res['offerInstructions'] = $hotOfferData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$hotOfferData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$hotOfferData->OFFER_BANNER;
+                $res['offerUrl'] = $hotOfferData->OFFER_URL;
+                $res['fallbackUrl'] = $hotOfferData->FALLBACK_URL;
                 $allHotOffersData[] = $res;
             }
         }else{
@@ -80,6 +84,8 @@ class Offers extends Controller
                 $res['offerInstructions'] = $reccomemndedOfferData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$reccomemndedOfferData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$reccomemndedOfferData->OFFER_BANNER;
+                $res['offerUrl'] = $reccomemndedOfferData->OFFER_URL;
+                $res['fallbackUrl'] = $reccomemndedOfferData->FALLBACK_URL;
                 $allReccomemndedOffersData[] = $res;
             }
         }else{
@@ -98,6 +104,8 @@ class Offers extends Controller
                 $res['offerInstructions'] = $specialOffersData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$specialOffersData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$specialOffersData->OFFER_BANNER;
+                $res['offerUrl'] = $specialOffersData->OFFER_URL;
+                $res['fallbackUrl'] = $specialOffersData->FALLBACK_URL;
                 $allspecialOffersData[] = $res;
             }
         }else{
@@ -116,6 +124,8 @@ class Offers extends Controller
                 $res['offerInstructions'] = $saleOffersData->OFFER_INSTRUCTIONS;
                 $res['offerThumbnail'] = env('THUMB_URL').$saleOffersData->OFFER_THUMBNAIL;
                 $res['offerBanner'] = env('BANNER_URL').$saleOffersData->OFFER_BANNER;
+                $res['offerUrl'] = $saleOffersData->OFFER_URL;
+                $res['fallbackUrl'] = $saleOffersData->FALLBACK_URL;
                 $allSaleOffersData[] = $res;
             }
         }else{
