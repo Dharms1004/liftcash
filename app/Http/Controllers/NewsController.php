@@ -27,7 +27,7 @@ class NewsController extends Controller
         $category = "&category=$request->category";
         $catName = $request->category;
         $params = $category.$language;
-        $newNews = $this->getNewsFromVendor($params);
+        // $newNews = $this->getNewsFromVendor($params);
         // Cache::flush();
         if (Cache::has($catName))
         {
