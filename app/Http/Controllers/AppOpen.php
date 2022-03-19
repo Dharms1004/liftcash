@@ -41,6 +41,7 @@ class AppOpen extends Controller
         /**check user consistence and credit bonus to both user and refferer */
         $popData = DB::table('headings')->select('HEADING', 'MESSAGE', 'THUMBNAIL', 'ACTION_URL', 'IS_BUTTON', 'STATUS')->where(['STATUS' => 1])->first();
         $popArray = array();
+        $popUpVisibility = $popData ? 1 : 0;
         
         if($popData){
             $popArray = [
@@ -64,7 +65,7 @@ class AppOpen extends Controller
             $res['userPromoCoin'] = $userBalance->userPromoCoin;
             $res['userMainCoin'] = $userBalance->userMainCoin;
             $res['userDiamond'] = $userDiamond->userDiamond ?? 0;
-            $res['popUp'] = env('HOME_PAGE_POPUP');
+            $res['popUp'] = $popUpVisibility;
             $res['popData'] = $popArray;
             $res['type'] = 'app_open';
             return response($res, 200);
