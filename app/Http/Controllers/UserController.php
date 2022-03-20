@@ -28,7 +28,7 @@ class UserController extends Controller
         try {
             $login = User::where('SOCIAL_EMAIL', $email)->limit(1)->first();
             if (!empty($login) && $login->count() > 0) { //user already signup return token in response
-                return $this->login($login);
+                return $this->login($login, $request->input('token') ?? NULL);
             } else {
                 //registration start
                 $rules = [
@@ -62,6 +62,7 @@ class UserController extends Controller
                     $utmContent = $request->input('utmContent');
                     $utmCampaign = $request->input('utmCampaign');
                     $refferalCode = $request->input('refferal_code') ? $request->input('refferal_code') : null;
+                    $fcmToken = $request->input('token') ? $request->input('token') : null;
 
                     if($refferalCode){
                         $refferData = User::select('USER_ID')->where('REFFER_CODE', $refferalCode)->first();
@@ -86,7 +87,8 @@ class UserController extends Controller
                         'ADVERTISING_ID' => $advertisingId,
                         'VERSION_NAME' => $versionName,
                         'VERSION_CODE' => $versionCode,
-                        'API_TOKEN' => $api_token
+                        'API_TOKEN' => $api_token,
+                        'FCM_TOKEN' => $fcmToken
                     ]);
                     if (!empty($userCreate->id)) {
 
@@ -125,11 +127,11 @@ class UserController extends Controller
         }
         //check if user is alrady exist check end
     }
-    private function login($login)
+    private function login($login, $fcmToken)
     { //if user already signup then logged in
         try {
             $api_token = sha1($login->socialEmail . time());
-            $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token]);
+            $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token, 'FCM_TOKEN' => $fcmToken]);
 
             if ($update_token) {
                 $res['status'] = '200';

@@ -10,6 +10,7 @@ use App\Models\UserMapping;
 use DB;
 use App\Traits\common_methods;
 use Illuminate\Support\Facades\DB as FacadesDB;
+use stdClass;
 
 class AppOpen extends Controller
 {
@@ -40,7 +41,7 @@ class AppOpen extends Controller
         $userDiamond = DB::table('user_wallet')->select('BALANCE as userDiamond')->where(['USER_ID' => $userId, 'COIN_TYPE' => 2])->first();
         /**check user consistence and credit bonus to both user and refferer */
         $popData = DB::table('headings')->select('HEADING', 'MESSAGE', 'THUMBNAIL', 'ACTION_URL', 'IS_BUTTON', 'STATUS')->where(['STATUS' => 1])->first();
-        $popArray = array();
+        $popArray = new stdClass();
         $popUpVisibility = $popData ? 1 : 0;
         
         if($popData){
