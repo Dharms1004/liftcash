@@ -61,6 +61,7 @@ class UserController extends Controller
                     $utmTerm = $request->input('utmTerm');
                     $utmContent = $request->input('utmContent');
                     $utmCampaign = $request->input('utmCampaign');
+                    $countryCode = $request->input('countryCode');
                     $refferalCode = $request->input('refferal_code') ? $request->input('refferal_code') : null;
                     $fcmToken = $request->input('token') ? $request->input('token') : null;
 
@@ -88,7 +89,8 @@ class UserController extends Controller
                         'VERSION_NAME' => $versionName,
                         'VERSION_CODE' => $versionCode,
                         'API_TOKEN' => $api_token,
-                        'FCM_TOKEN' => $fcmToken
+                        'FCM_TOKEN' => $fcmToken,
+                        'COUNTRY_CODE' => $countryCode
                     ]);
                     if (!empty($userCreate->id)) {
 
