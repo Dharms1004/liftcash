@@ -55,7 +55,7 @@ class Profile extends Controller
         $gender = $request->input('gender');
         $city = $request->input('city');
         $state = $request->input('state');
-        $country = $request->input('country');
+        // $country = $request->input('country');
         $profileUpdate = User::where('USER_ID', $check_token->USER_ID)->update([
             'PHONE' => $phone,
             'USER_LOCALE' => $locale,
@@ -64,7 +64,7 @@ class Profile extends Controller
             'DOB' => $dob,
             'PROFILE_PIC' => $profilePic,
             'GENDER' => $gender,
-            'COUNTRY_CODE' => $country,
+            // 'COUNTRY_CODE' => $country,
             'CITY' => $city,
             'STATE' => $state,
             'REFFER_ID' => $refferId,

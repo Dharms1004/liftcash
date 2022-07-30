@@ -54,3 +54,4 @@ $router->post('/getMiniBannerOpen', ['uses' => 'MiniBanner@getAllBanners']);
 
 
 $router->post('/getNews',['uses' =>  'NewsController@getAllNews']);
+$router->post('/getCountryList', ['uses' =>  'Misc@getActiveCountries']);
