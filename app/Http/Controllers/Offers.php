@@ -20,6 +20,7 @@ class Offers extends Controller
             'required' => 'Please fill required :attribute'
         ];
         $limit = $request->input('limit');
+        $country = $request->countryCode ?? 99;
 
         $allOffersData = [];
         $allHotOffersData = [];
