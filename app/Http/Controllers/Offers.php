@@ -27,7 +27,7 @@ class Offers extends Controller
         $allspecialOffersData = [];
         $allSaleOffersData = [];
         
-        $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->whereNotIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
+        $allOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->orWhere(['COUNTRY_ID' => 0])->whereNotIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
 
         if (!empty($allOffers)) {
             $statusData['status'] = '200';
@@ -52,7 +52,7 @@ class Offers extends Controller
             $allOffersData = "N\A";
         }
 
-        $hotOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 3, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->limit($limit)->get();
+        $hotOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 3, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->orWhere(['COUNTRY_ID' => 0])->limit($limit)->get();
        
         if(!empty($hotOffers)){
             foreach ($hotOffers as $hotOfferData) {
@@ -72,7 +72,7 @@ class Offers extends Controller
             $allHotOffersData = "N\A";
         }
 
-        $reccomemndedOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 2, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->limit($limit)->get();
+        $reccomemndedOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 2, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->orWhere(['COUNTRY_ID' => 0])->limit($limit)->get();
 
         if(!empty($reccomemndedOffers)){
             foreach ($reccomemndedOffers as $reccomemndedOfferData) {
@@ -92,7 +92,7 @@ class Offers extends Controller
             $allReccomemndedOffersData = "N\A";
         }
 
-        $specialOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 4, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->limit($limit)->get();
+        $specialOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 4, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->orWhere(['COUNTRY_ID' => 0])->limit($limit)->get();
 
         if(!empty($specialOffers)){
             foreach ($specialOffers as $specialOffersData) {
@@ -112,7 +112,7 @@ class Offers extends Controller
             $allspecialOffersData = "N\A";
         }
 
-        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 6, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->whereIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
+        $saleOffers = DB::table('offer')->orderBy('OFFER_ID', 'desc')->where(['OFFER_DISPLAY_TYPE' => 6, 'STATUS' => 1, 'COUNTRY_ID' => $request->countryCode])->orWhere(['COUNTRY_ID' => 0])->whereIn('OFFER_CATEGORY', [4,5])->limit($limit)->get();
 
         if(!empty($saleOffers)){
             foreach ($saleOffers as $saleOffersData) {
