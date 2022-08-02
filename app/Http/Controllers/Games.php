@@ -7,12 +7,20 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Promotions;
 use App\Models\User;
 use DB;
+use App\Traits\common_methods;
 
 class Games extends Controller
 {
+    use common_methods;
+
     public function getAllGames(Request $request)
     {
-        $games = DB::table('games')->get();
+        dd($request->api_token);
+        $country = $this->getUserCountryId($request->api_token);
+
+        $countryId = $country->COUNTRY_CODE ?? 99;
+
+        $games = DB::table('games')->where(['status' => 1, "country_id" => $countryId])->get();
         if ($games) {
             foreach ($games as $gameData) {
 

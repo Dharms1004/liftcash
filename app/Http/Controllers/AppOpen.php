@@ -62,6 +62,7 @@ class AppOpen extends Controller
             $res['userId'] = $userId;
             $res['forceUpdate'] = $forceUpdate;
             $res['currency'] = '₹';
+            $res['userCoin'] = $userBalance->userCoin;
             $res['userCountry'] = $userBalance->COUNTRY_CODE;
             $res['userPromoCoin'] = $userBalance->userPromoCoin;
             $res['userMainCoin'] = $userBalance->userMainCoin;

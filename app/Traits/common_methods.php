@@ -6,6 +6,7 @@ use App\Models\Users;
 use App\Models\UserWallet;
 use App\Models\MasterTransactionHistory;
 use App\Models\MasterTransactionHistoryDiamond;
+use App\Models\User;
 use DB;
 use DateTime;
 
@@ -115,6 +116,13 @@ trait common_methods
             ->where(["USER_ID" => $userId, "TRANSACTION_TYPE_ID" => $spinTransactionTypeId, "TRANSACTION_STATUS_ID" => $spinTransactionStatusSuccess])
             ->whereBetween('TRANSACTION_DATE',[$startTime, $endTime])
             ->count();
+    }
+
+    // get users country id
+
+    public function getUserCountryId($token){
+        
+        return $country = User::select('COUNTRY_CODE')->where(['API_TOKEN' => $token])->first();
     }
 
 
