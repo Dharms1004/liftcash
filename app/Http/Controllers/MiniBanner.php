@@ -7,12 +7,19 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Promotions;
 use App\Models\User;
 use DB;
+use App\Traits\common_methods;
 
 class MiniBanner extends Controller
 {
+    use common_methods;
+
     public function getAllBanners(Request $request)
     {
-        $banners = DB::table('mini_banner')->where('STATUS', 1)->get();
+        $country = $this->getUserCountryId($request->api_token);
+
+        $countryId = $country->COUNTRY_CODE ?? 99;
+
+        $banners = DB::table('mini_banner')->where(['STATUS' => 1, 'COUNTRY_ID' => $countryId])->get();
 
         if (count($banners)) {
             foreach ($banners as $banner) {
