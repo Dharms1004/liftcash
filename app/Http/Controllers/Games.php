@@ -15,7 +15,7 @@ class Games extends Controller
 
     public function getAllGames(Request $request)
     {
-        dd($request->api_token);
+        // dd($request->api_token);
         $country = $this->getUserCountryId($request->api_token);
 
         $countryId = $country->COUNTRY_CODE ?? 99;
