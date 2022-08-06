@@ -7,9 +7,11 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Promotions;
 use App\Models\User;
 use DB;
-
+use App\Traits\common_methods;
 class Offers extends Controller
 {
+    use common_methods;
+
     public function getAllOffer(Request $request)
     {
         $rules = [
@@ -20,7 +22,10 @@ class Offers extends Controller
             'required' => 'Please fill required :attribute'
         ];
         $limit = $request->input('limit');
-        $country = $request->countryCode ?? 99;
+        // $country = $request->countryCode ?? 99;
+        $countryId = $this->getUserCountryId($request->api_token);
+
+        $country = $countryId->COUNTRY_CODE ?? 99;
 
         $allOffersData = [];
         $allHotOffersData = [];
