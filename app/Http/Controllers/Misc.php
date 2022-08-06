@@ -12,7 +12,7 @@ class Misc extends Controller
 {
     public function getActiveCountries(Request $request)
     {
-        $country = DB::table('country')->where(['STATUS' => 1])->get();
+        $country = DB::table('country')->where(['STATUS' => 1])->whereNotIn('ID',[240])->get();
         if ($country) {
             foreach ($country as $countryData) {
 
