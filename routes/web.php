@@ -44,6 +44,14 @@ $router->post('/getLeaderBoardRanking', ['middleware' => 'auth', 'uses' => 'Lead
 $router->post('/getVideos', ['middleware' => 'auth', 'uses' => 'VideoListing@getAllVideos']);
 $router->post('/getMiniBanner', ['middleware' => 'auth', 'uses' => 'MiniBanner@getAllBanners']);
 
+//tournament all routes
+$router->post('/tournamet-list', ['middleware' => 'auth', 'uses' => 'TournamentController@getAllTours']);
+$router->post('/tournament', ['middleware' => 'auth', 'uses' => 'TournamentController@getTour']);
+$router->post('/create-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@createTourTeam']);
+$router->post('/create-team-players', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@addTeamWithPlayers']);
+$router->post('/get-my-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@getMyTeam']);
+$router->post('/register-player-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@registerPlayer']);
+
 
 //without Auth
 $router->post('/offerListOpen',['uses' =>  'Offers@getAllOffer']);
