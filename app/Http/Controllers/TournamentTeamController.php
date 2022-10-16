@@ -18,7 +18,7 @@ class TournamentTeamController extends Controller
 
     $rules = [
         'api_token' => 'required|max:100',
-        'tour_id' => 'required|max:100',
+        // 'tour_id' => 'required|max:100',
         'team_name' => 'required|max:100',
         'team_desc' => 'required|max:100',
         'contact_person' => 'required|max:10',
@@ -32,13 +32,9 @@ class TournamentTeamController extends Controller
     $token = $request->input('api_token');
     $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
-    $checkIfTeamExist = TournamentTeam::where(['USER_ID' => $check_token->USER_ID, 'TEAM_TOUR_ID' => $request->tour_id])->first();
-
-    if(empty($checkIfTeamExist)){
-
         $tourTeam = TournamentTeam::create([
             'USER_ID' => $check_token->USER_ID,
-            'TEAM_TOUR_ID' => $request->tour_id,
+            // 'TEAM_TOUR_ID' => $request->tour_id,
             'TEAM_NAME' => $request->team_name,
             'TEAM_DESCRIPTION' => $request->team_desc,
             'TEAM_CONTACT' => $request->contact_person,
@@ -59,14 +55,8 @@ class TournamentTeamController extends Controller
             return response($res);
         }
 
-    }else{
-        $res['status'] = false;
-        $res['message'] = "You have already created a team.";
-        $res['type'] = 'some_error_occured';
-        return response($res, 400);
-    }
-
   }
+
   public function registerPlayer(Request $request){
 
     $rules = [
@@ -121,6 +111,7 @@ class TournamentTeamController extends Controller
 
     $rules = [
         'api_token' => 'required|max:100',
+        'team_id' => 'required|max:100',
     ];
 
     $customMessages = [
@@ -131,7 +122,7 @@ class TournamentTeamController extends Controller
     $token = $request->input('api_token');
     $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
-    $getTeam = TournamentTeam::where(['USER_ID' => $check_token->USER_ID])->first();
+    $getTeam = TournamentTeam::where(['USER_ID' => $check_token->USER_ID, 'TEAM_ID' => $request->team_id])->first();
 
     if(!empty($getTeam)){        
         $res['status'] = '200';
@@ -181,13 +172,9 @@ class TournamentTeamController extends Controller
     $token = $request->input('api_token');
     $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
-    $checkIfTeamExist = TournamentTeam::where(['USER_ID' => $check_token->USER_ID, 'TEAM_TOUR_ID' => $request->tour_id])->first();
-
-    if(empty($checkIfTeamExist)){
-
         $tourTeam = TournamentTeam::create([
             'USER_ID' => $check_token->USER_ID,
-            'TEAM_TOUR_ID' => $request->tour_id,
+            // 'TEAM_TOUR_ID' => $request->tour_id,
             'TEAM_NAME' => $request->team_name,
             'TEAM_DESCRIPTION' => $request->team_desc,
             'TEAM_CONTACT' => $request->contact_person,
@@ -223,10 +210,51 @@ class TournamentTeamController extends Controller
             $res['type'] = 'some_error_occured';
             return response($res);
         }
+  }
 
+  public function getAllTeams(Request $request){
+    
+    $rules = [
+        'api_token' => 'required|max:100',
+    ];
+
+    $customMessages = [
+        'required' => 'Please fill required :attribute'
+    ];
+
+    $this->validate($request, $rules, $customMessages);
+    $token = $request->input('api_token');
+    $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+
+    $getTeams = TournamentTeam::where(['USER_ID' => $check_token->USER_ID])->get();
+
+    if(!empty($getTeams)){   
+        $res['status'] = '200';
+        $res['message'] = 'Success';
+        foreach ($getTeams as $key => $team) {   
+            $newTeam[$key]['name'] = $team->TEAM_NAME;
+            $newTeam[$key]['desc'] = $team->TEAM_DESCRIPTION;
+            $newTeam[$key]['team_contact'] = $team->TEAM_CONTACT;
+
+            $teamPlayers = TeamPlayer::where(['PLAYER_TEAM_ID' => $team->TEAM_ID])->get();
+
+            if(count($teamPlayers)){
+                foreach ($teamPlayers as $player) {
+                    $newTeam[$key]['teamPlayer'][] = [
+                        'playerName' => $player->PLAYER_NAME,
+                        'playerMobile' => $player->PLAYER_MOBILE,
+                    ];
+                }
+            }else{
+                $newTeam[$key]['teamPlayer'] = [];
+            }
+
+            $res['team'] = $newTeam;
+        }
+        return response($res, 200);
     }else{
         $res['status'] = false;
-        $res['message'] = "You have already created a team.";
+        $res['message'] = "No teams found.";
         $res['type'] = 'some_error_occured';
         return response($res, 400);
     }

@@ -47,9 +47,11 @@ $router->post('/getMiniBanner', ['middleware' => 'auth', 'uses' => 'MiniBanner@g
 //tournament all routes
 $router->post('/tournamet-list', ['middleware' => 'auth', 'uses' => 'TournamentController@getAllTours']);
 $router->post('/tournament', ['middleware' => 'auth', 'uses' => 'TournamentController@getTour']);
+$router->post('/get-tour-winners', ['middleware' => 'auth', 'uses' => 'TournamentController@getTournamentWinners']);
 $router->post('/create-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@createTourTeam']);
 $router->post('/create-team-players', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@addTeamWithPlayers']);
 $router->post('/get-my-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@getMyTeam']);
+$router->post('/get-all-teams', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@getAllTeams']);
 $router->post('/register-player-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@registerPlayer']);
 
 
