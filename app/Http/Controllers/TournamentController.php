@@ -9,6 +9,7 @@ use App\Models\Contest;
 use App\Models\ContestParticipants;
 use App\Models\User;
 use App\Models\Tournament;
+use App\Models\TournamentWinner;
 use App\Traits\common_methods;
 use Illuminate\Support\Facades\DB;
 
@@ -138,6 +139,8 @@ class TournamentController extends Controller
     $customMessages = [
         'required' => 'Please fill required :attribute'
     ];
+
+    $this->validate($request, $rules, $customMessages);
     $limit = $request->input('limit');
     $tourId = $request->input('tour_id');
     $activeTour = Tournament::where('TOUR_ID', $tourId)->first();
@@ -172,6 +175,52 @@ class TournamentController extends Controller
         $res['type'] = 'failed_to_get_tour_detail';
         return response($res);
     }
+  }
+
+  public function getTournamentWinners(Request $request){
+
+    $rules = [
+        'tour_id' => 'required',
+        'api_token' => 'required|max:100'
+
+    ];
+
+    $customMessages = [
+        'required' => 'Please fill required :attribute'
+    ];
+
+    $this->validate($request, $rules, $customMessages);
+    $limit = $request->input('limit');
+    $tourId = $request->input('tour_id');
+    $tourWinner = DB::table('tr_winners as tw')->select("tw.TEAM_ID", "tw.TOUR_ID", "tw.RANK", "tw.PRIZE_MONEY" ,"tt.TOUR_NAME", "ttt.TEAM_NAME")->join('tr_tournament_team as ttt', 'tw.TEAM_ID', '=', 'ttt.TEAM_ID')->join('tr_tournament as tt', 'tw.TOUR_ID', '=', 'tt.TOUR_ID')->where('tw.TOUR_ID', $tourId)->orderBy('tw.RANK')->get();
+ 
+    if(count($tourWinner)){
+        foreach ($tourWinner as $key => $winner) {
+            $win[$key] = [
+                'tour_id' => $winner->TOUR_ID,
+                'tour_name' => $winner->TOUR_NAME,
+                'team_id' => $winner->TEAM_ID,
+                'team_name' => $winner->TEAM_NAME,
+                'rank' => $winner->RANK,
+                'prize_money' => $winner->PRIZE_MONEY
+
+            ];
+        }
+
+        $statusData['status'] = '200';
+        $statusData['message'] = 'Success';
+        $statusData['type'] = 'get_single_tour';
+        $statusData['winners'] = $win;
+
+        return response($statusData);
+
+    }else{
+        $res['status'] = false;
+        $res['message'] = 'Failed';
+        $res['type'] = 'no_wiiners_declared_yet';
+        return response($res);
+    }
+    
   }
 
 }
