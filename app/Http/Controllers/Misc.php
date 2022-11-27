@@ -18,6 +18,7 @@ class Misc extends Controller
 
                 $res['countryId'] = $countryData->ID;
                 $res['countryName'] = $countryData->NAME;
+                $res['countryFlag'] = !empty($countryData->FLAG) ? env('FLAG_URL').$countryData->FLAG : "";
                 $res['type'] = 'get_all_country';
                 $allCountryData[] = $res;
 
