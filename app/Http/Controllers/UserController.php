@@ -24,11 +24,12 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
         $email    = $request->input('socialEmail');
+        $countryCode = $request->input('countryCode') ?? '0';
 
         try {
             $login = User::where('SOCIAL_EMAIL', $email)->limit(1)->first();
             if (!empty($login) && $login->count() > 0) { //user already signup return token in response
-                return $this->login($login, $request->input('token') ?? NULL);
+                return $this->login($login, $request->input('token') ?? NULL, $countryCode));
             } else {
                 //registration start
                 $rules = [
@@ -129,11 +130,11 @@ class UserController extends Controller
         }
         //check if user is alrady exist check end
     }
-    private function login($login, $fcmToken)
+    private function login($login, $fcmToken, $countryCode)
     { //if user already signup then logged in
         try {
             $api_token = sha1($login->socialEmail . time());
-            $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token, 'FCM_TOKEN' => $fcmToken]);
+            $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token, 'FCM_TOKEN' => $fcmToken, 'COUNTRY_CODE' => $country]);
 
             if ($update_token) {
                 $res['status'] = '200';
