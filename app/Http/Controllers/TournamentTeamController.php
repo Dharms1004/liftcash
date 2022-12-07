@@ -232,6 +232,8 @@ class TournamentTeamController extends Controller
         $res['status'] = '200';
         $res['message'] = 'Success';
         foreach ($getTeams as $key => $team) {   
+            $newTeam[$key]['team_Id'] = $team->TEAM_ID;
+            $newTeam[$key]['tour_id'] = $team->TEAM_TOUR_ID;
             $newTeam[$key]['name'] = $team->TEAM_NAME;
             $newTeam[$key]['desc'] = $team->TEAM_DESCRIPTION;
             $newTeam[$key]['team_contact'] = $team->TEAM_CONTACT;

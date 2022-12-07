@@ -50,13 +50,15 @@ class TournamentController extends Controller
                 "tourMinTeam" => $activeTour->TOUR_MIN_TEAM_REQUIRED,
                 "tourMinPlayer" => $activeTour->TOUR_MIN_PLAYERS_REQUIRED,
                 "tourMaxPlayer" => $activeTour->TOUR_MAX_PLAYERS_ALLOWED,
-                "tourlogo" => $activeTour->TOUR_LOGO,
-                "tourBanner" => $activeTour->TOUR_BANNER,
-                "tourMiniBanner" => $activeTour->TOUR_MINI_BANNER,
+                "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
+                "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
+                "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
                 "tourStartTime" => $activeTour->TOUR_START_TIME,
                 "tourEndTime" => $activeTour->TOUR_END_TIME,
                 "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
                 "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+                "tourOrgName" => $activeTour->ORG_NAME ?? "",
+                "tourOrgContact" => $activeTour->ORG_CONTACT ?? "",
             ];
         }
     }else{
@@ -77,13 +79,15 @@ class TournamentController extends Controller
                 "tourMinTeam" => $activeTour->TOUR_MIN_TEAM_REQUIRED,
                 "tourMinPlayer" => $activeTour->TOUR_MIN_PLAYERS_REQUIRED,
                 "tourMaxPlayer" => $activeTour->TOUR_MAX_PLAYERS_ALLOWED,
-                "tourlogo" => $activeTour->TOUR_LOGO,
-                "tourBanner" => $activeTour->TOUR_BANNER,
-                "tourMiniBanner" => $activeTour->TOUR_MINI_BANNER,
+                "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
+                "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
+                "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
                 "tourStartTime" => $activeTour->TOUR_START_TIME,
                 "tourEndTime" => $activeTour->TOUR_END_TIME,
                 "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
                 "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+                "tourOrgName" => $activeTour->ORG_NAME ?? "",
+                "tourOrgContact" => $activeTour->ORG_CONTACT ?? "",
             ];
         }
     }else{
@@ -104,13 +108,15 @@ class TournamentController extends Controller
                 "tourMinTeam" => $activeTour->TOUR_MIN_TEAM_REQUIRED,
                 "tourMinPlayer" => $activeTour->TOUR_MIN_PLAYERS_REQUIRED,
                 "tourMaxPlayer" => $activeTour->TOUR_MAX_PLAYERS_ALLOWED,
-                "tourlogo" => $activeTour->TOUR_LOGO,
-                "tourBanner" => $activeTour->TOUR_BANNER,
-                "tourMiniBanner" => $activeTour->TOUR_MINI_BANNER,
+                "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
+                "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
+                "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
                 "tourStartTime" => $activeTour->TOUR_START_TIME,
                 "tourEndTime" => $activeTour->TOUR_END_TIME,
                 "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
                 "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+                "tourOrgName" => $activeTour->ORG_NAME ?? "",
+                "tourOrgContact" => $activeTour->ORG_CONTACT ?? "",
             ];
         }
     }else{
@@ -159,13 +165,15 @@ class TournamentController extends Controller
             "tourMinTeam" => $activeTour->TOUR_MIN_TEAM_REQUIRED,
             "tourMinPlayer" => $activeTour->TOUR_MIN_PLAYERS_REQUIRED,
             "tourMaxPlayer" => $activeTour->TOUR_MAX_PLAYERS_ALLOWED,
-            "tourlogo" => $activeTour->TOUR_LOGO,
-            "tourBanner" => $activeTour->TOUR_BANNER,
-            "tourMiniBanner" => $activeTour->TOUR_MINI_BANNER,
+            "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
+            "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
+            "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
             "tourStartTime" => $activeTour->TOUR_START_TIME,
             "tourEndTime" => $activeTour->TOUR_END_TIME,
             "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
             "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+            "tourOrgName" => $activeTour->ORG_NAME,
+            "tourOrgContact" => $activeTour->ORG_CONTACT,
         ];
        
         return response($statusData);

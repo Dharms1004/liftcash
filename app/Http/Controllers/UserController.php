@@ -29,7 +29,7 @@ class UserController extends Controller
         try {
             $login = User::where('SOCIAL_EMAIL', $email)->limit(1)->first();
             if (!empty($login) && $login->count() > 0) { //user already signup return token in response
-                return $this->login($login, $request->input('token') ?? NULL, $countryCode));
+                return $this->login($login, $request->input('token') ?? NULL, $countryCode);
             } else {
                 //registration start
                 $rules = [
@@ -134,7 +134,7 @@ class UserController extends Controller
     { //if user already signup then logged in
         try {
             $api_token = sha1($login->socialEmail . time());
-            $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token, 'FCM_TOKEN' => $fcmToken, 'COUNTRY_CODE' => $country]);
+            $update_token = User::where('USER_ID', $login->USER_ID)->update(['API_TOKEN' => $api_token, 'FCM_TOKEN' => $fcmToken, 'COUNTRY_CODE' => $countryCode]);
 
             if ($update_token) {
                 $res['status'] = '200';
