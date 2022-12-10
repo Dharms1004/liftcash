@@ -10,6 +10,8 @@ use App\Models\ContestParticipants;
 use App\Models\User;
 use App\Models\Tournament;
 use App\Models\TournamentWinner;
+use App\Models\TournamentRegistration;
+use App\Models\TournamentTeam;
 use App\Traits\common_methods;
 use Illuminate\Support\Facades\DB;
 
@@ -32,9 +34,11 @@ class TournamentController extends Controller
     $token = $request->input('api_token');
     $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
+    $usersTeam = TournamentTeam::where(['USER_ID' => $check_token->USER_ID])->pluck('TEAM_ID');
     $upcomingTours = Tournament::where('TOUR_START_TIME', ">=", date('Y-m-d H:i:s'))->where('TOUR_STATUS', 1)->get();
-    $completedTours = Tournament::where('TOUR_END_TIME', "<", date('Y-m-d H:i:s'))->where('TOUR_STATUS', 1)->get();
-    $registeringTours = DB::table('tr_tournament as tt')->join('tr_tournament_team as ttt', 'tt.TOUR_ID', '=', 'ttt.TEAM_TOUR_ID')->where('tt.TOUR_END_TIME', ">", date('Y-m-d H:i:s'))->where(['tt.TOUR_STATUS' => 1, 'ttt.USER_ID' => $check_token->USER_ID])->get();
+    $completedTours = Tournament::where('TOUR_END_TIME', "<", date('Y-m-d H:i:s'))->where('TOUR_STATUS', 1)->get();    
+    $registeringTours = DB::table('tr_tournament as tt')->join('tr_tournament_registration as ttr', 'tt.TOUR_ID', '=', 'ttr.TOUR_ID')->where('tt.TOUR_END_TIME', ">", date('Y-m-d H:i:s'))->where(['tt.TOUR_STATUS' => 1])->whereIn('ttr.TEAM_ID', $usersTeam)->get();
+  
    
     if(count($upcomingTours)){
         foreach($upcomingTours as $i => $activeTour){
@@ -229,6 +233,72 @@ class TournamentController extends Controller
         return response($res);
     }
     
+  }
+
+  public function registerTeamInTour(Request $request){
+    
+    $rules = [
+        'tour_id' => 'required',
+        'team_id' => 'required',
+
+    ];
+    $customMessages = [
+        'required' => 'Please fill required :attribute'
+    ];
+
+    $this->validate($request, $rules, $customMessages);
+    
+    $token = $request->input('api_token');
+    $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+
+    $tourId = $request->input('tour_id');
+    $teamId = $request->input('team_id');
+    $activeTour = Tournament::where('TOUR_REGISTRATION_END_TIME', ">=", date('Y-m-d H:i:s'))->where(['TOUR_STATUS' => 1, 'TOUR_ID' => $tourId])->first();
+    $registeredTeam = TournamentRegistration::where(['TOUR_ID' => $request->tour_id, 'TEAM_ID' => $request->team_id])->first(); 
+    $availableTeam = TournamentTeam::where(['USER_ID' => $check_token->USER_ID, 'TEAM_ID' => $teamId])->first();
+    
+    if(!empty($activeTour)){ // ccheck if team belongs to same user 
+        if (empty($registeredTeam)) { // check if tournament not started 
+            if (!empty($availableTeam)) { // check if team is alredy registered in same team
+                $teamRegistered = TournamentRegistration::create([
+                    'USER_ID' => $check_token->USER_ID,
+                    'TOUR_ID' => $tourId,
+                    'TEAM_ID' => $teamId,
+                    'STATUS' => 1,
+                    'CREATED_AT'  => date('Y-m-d H:i:s'),
+                ]);
+
+                if(!empty($teamRegistered)){        
+                    $res['status'] = '200';
+                    $res['message'] = 'Success';
+                    $res['type'] = 'Team created sucessfully';
+                    return response($res, 200);
+                }else{
+                    $res['status'] = false;
+                    $res['message'] = "unable to register team with this tournament";
+                    $res['type'] = 'some_error_occured';
+                    return response($res);
+                }
+
+            }else{
+                $res['status'] = false;
+                $res['message'] = 'Wrong Team selection.';
+                $res['type'] = 'seems_like_team_associated_with_other_user';
+                return response($res);
+            }
+        }else{
+            $res['status'] = false;
+            $res['message'] = 'This team is already registered in this tournament.';
+            $res['type'] = 'already_registered';
+            return response($res);
+        }
+    }else{
+        $res['status'] = false;
+        $res['message'] = 'Tournament is already started or Not availble.';
+        $res['type'] = 'no_tournament_found';
+        return response($res);
+    }
+
   }
 
 }
