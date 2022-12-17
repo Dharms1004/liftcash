@@ -178,6 +178,7 @@ class TournamentController extends Controller
             "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
             "tourOrgName" => $activeTour->ORG_NAME,
             "tourOrgContact" => $activeTour->ORG_CONTACT,
+            "tourRules" => json_decode($activeTour->TOUR_RULES),
         ];
        
         return response($statusData);
