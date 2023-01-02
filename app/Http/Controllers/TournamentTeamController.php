@@ -22,6 +22,8 @@ class TournamentTeamController extends Controller
         'team_name' => 'required|max:100',
         'team_desc' => 'required|max:100',
         'contact_person' => 'required|max:10',
+        'manager_name' => 'required',
+        'manager_email' => 'required',
     ];
 
     $customMessages = [
@@ -34,11 +36,12 @@ class TournamentTeamController extends Controller
 
         $tourTeam = TournamentTeam::create([
             'USER_ID' => $check_token->USER_ID,
-            // 'TEAM_TOUR_ID' => $request->tour_id,
             'TEAM_NAME' => $request->team_name,
             'TEAM_DESCRIPTION' => $request->team_desc,
             'TEAM_CONTACT' => $request->contact_person,
             'TEAM_STATUS' => 1,
+            'TEAM_MANAGER_NAME' => $request->manager_name,
+            'TEAM_MANAGER_EMAIL' => $request->manager_email,
             'CREATED_BY' => $check_token->USER_ID,
             'CREATED_AT'  => date('Y-m-d H:i:s'),
         ]);
@@ -161,7 +164,9 @@ class TournamentTeamController extends Controller
         'team_name' => 'required|max:100',
         'player_count' => 'required',
         'team_desc' => 'required|max:100',
-        'contact_person' => 'required|max:10'
+        'contact_person' => 'required|max:10',
+        'manager_name' => 'required',
+        'manager_email' => 'required'
     ];
     
     $customMessages = [
@@ -178,6 +183,8 @@ class TournamentTeamController extends Controller
             'TEAM_NAME' => $request->team_name,
             'TEAM_DESCRIPTION' => $request->team_desc,
             'TEAM_CONTACT' => $request->contact_person,
+            'TEAM_MANAGER_NAME' => $request->manager_name,
+            'TEAM_MANAGER_EMAIL' => $request->manager_email,
             'TEAM_STATUS' => 1,
             'CREATED_BY' => $check_token->USER_ID,
             'CREATED_AT'  => date('Y-m-d H:i:s'),

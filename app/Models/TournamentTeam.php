@@ -11,6 +11,6 @@ class TournamentTeam extends Model
     public $timestamps = false;
     protected $primaryKey = 'TEAM_ID';
 
-    protected $fillable = ['TEAM_ID','USER_ID','TEAM_TOUR_ID', 'TEAM_NAME', 'TEAM_DESCRIPTION', 'TEAM_CONTACT', 'TEAM_STATUS', 'CREATED_BY', 'CREATED_AT'];
+    protected $fillable = ['TEAM_ID','USER_ID','TEAM_TOUR_ID', 'TEAM_NAME', 'TEAM_DESCRIPTION', 'TEAM_CONTACT', 'TEAM_MANAGER_NAME', 'TEAM_MANAGER_EMAIL', 'TEAM_STATUS', 'CREATED_BY', 'CREATED_AT'];
 
 }
