@@ -57,10 +57,10 @@ class TournamentController extends Controller
                 "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
                 "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
                 "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
-                "tourStartTime" => $activeTour->TOUR_START_TIME,
-                "tourEndTime" => $activeTour->TOUR_END_TIME,
-                "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
-                "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+                "tourStartTime" => date("d M Y h:i A",strtotime($activeTour->TOUR_START_TIME)),
+                "tourEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_END_TIME)),
+                "tourRegStartTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_START_TIME)),
+                "tourRegEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_END_TIME)),
                 "tourOrgName" => $activeTour->ORG_NAME ?? "",
                 "tourOrgContact" => $activeTour->ORG_CONTACT ?? "",
             ];
@@ -86,10 +86,10 @@ class TournamentController extends Controller
                 "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
                 "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
                 "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
-                "tourStartTime" => $activeTour->TOUR_START_TIME,
-                "tourEndTime" => $activeTour->TOUR_END_TIME,
-                "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
-                "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+                "tourStartTime" => date("d M Y h:i A",strtotime($activeTour->TOUR_START_TIME)),
+                "tourEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_END_TIME)),
+                "tourRegStartTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_START_TIME)),
+                "tourRegEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_END_TIME)),
                 "tourOrgName" => $activeTour->ORG_NAME ?? "",
                 "tourOrgContact" => $activeTour->ORG_CONTACT ?? "",
             ];
@@ -115,10 +115,10 @@ class TournamentController extends Controller
                 "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
                 "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
                 "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
-                "tourStartTime" => $activeTour->TOUR_START_TIME,
-                "tourEndTime" => $activeTour->TOUR_END_TIME,
-                "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
-                "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+                "tourStartTime" => date("d M Y h:i A",strtotime($activeTour->TOUR_START_TIME)),
+                "tourEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_END_TIME)),
+                "tourRegStartTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_START_TIME)),
+                "tourRegEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_END_TIME)),
                 "tourOrgName" => $activeTour->ORG_NAME ?? "",
                 "tourOrgContact" => $activeTour->ORG_CONTACT ?? "",
             ];
@@ -172,10 +172,10 @@ class TournamentController extends Controller
             "tourlogo" => env('TOUR_IMAGE_URL').$activeTour->TOUR_LOGO,
             "tourBanner" => env('TOUR_BANNER_IMAGE_URL').$activeTour->TOUR_BANNER,
             "tourMiniBanner" => env('TOUR_MINI_BANNER_IMAGE_URL').$activeTour->TOUR_MINI_BANNER,
-            "tourStartTime" => $activeTour->TOUR_START_TIME,
-            "tourEndTime" => $activeTour->TOUR_END_TIME,
-            "tourRegStartTime" => $activeTour->TOUR_REGISTRATION_START_TIME,
-            "tourRegEndTime" => $activeTour->TOUR_REGISTRATION_END_TIME,
+            "tourStartTime" => date("d M Y h:i A",strtotime($activeTour->TOUR_START_TIME)),
+            "tourEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_END_TIME)),
+            "tourRegStartTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_START_TIME)),
+            "tourRegEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_END_TIME)),
             "tourOrgName" => $activeTour->ORG_NAME,
             "tourOrgContact" => $activeTour->ORG_CONTACT,
             "tourRules" => json_decode($activeTour->TOUR_RULES),
@@ -205,7 +205,7 @@ class TournamentController extends Controller
     $this->validate($request, $rules, $customMessages);
     $limit = $request->input('limit');
     $tourId = $request->input('tour_id');
-    $tourWinner = DB::table('tr_winners as tw')->select("tw.TEAM_ID", "tw.TOUR_ID", "tw.RANK", "tw.PRIZE_MONEY" ,"tt.TOUR_NAME", "ttt.TEAM_NAME")->join('tr_tournament_team as ttt', 'tw.TEAM_ID', '=', 'ttt.TEAM_ID')->join('tr_tournament as tt', 'tw.TOUR_ID', '=', 'tt.TOUR_ID')->where('tw.TOUR_ID', $tourId)->orderBy('tw.RANK')->get();
+    $tourWinner = DB::table('tr_winners as tw')->select("tw.TEAM_ID", "tw.TOUR_ID", "tw.TEAM_LOGO", "tw.TEAM_IMAGE", "tw.RANK", "tw.PRIZE_MONEY" ,"tt.TOUR_NAME", "ttt.TEAM_NAME")->join('tr_tournament_team as ttt', 'tw.TEAM_ID', '=', 'ttt.TEAM_ID')->join('tr_tournament as tt', 'tw.TOUR_ID', '=', 'tt.TOUR_ID')->where('tw.TOUR_ID', $tourId)->orderBy('tw.RANK')->get();
  
     if(count($tourWinner)){
         foreach ($tourWinner as $key => $winner) {
@@ -214,6 +214,8 @@ class TournamentController extends Controller
                 'tour_name' => $winner->TOUR_NAME,
                 'team_id' => $winner->TEAM_ID,
                 'team_name' => $winner->TEAM_NAME,
+                'team_logo' => env('TR_TEAM_LOGO').$winner->TEAM_LOGO,
+                'team_image' => env('TR_TEAM_IMAGE').$winner->TEAM_IMAGE,
                 'rank' => $winner->RANK,
                 'prize_money' => $winner->PRIZE_MONEY
 
