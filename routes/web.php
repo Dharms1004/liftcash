@@ -53,7 +53,9 @@ $router->post('/create-team-players', ['middleware' => 'auth', 'uses' => 'Tourna
 $router->post('/get-my-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@getMyTeam']);
 $router->post('/get-all-teams', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@getAllTeams']);
 $router->post('/register-player-team', ['middleware' => 'auth', 'uses' => 'TournamentTeamController@registerPlayer']);
-$router->post('/join-tournament', ['middleware' => 'auth', 'uses' => 'TournamentController@registerTeamInTour']);
+$router->post('/join-tournaments-with-player', ['middleware' => 'auth', 'uses' => 'TournamentController@registerPlayerInTour']);
+$router->post('/join-tournament', ['middleware' => 'auth', 'uses' => 'TournamentController@registerTeamInTour']); // join tournament with team
+$router->post('/search-player', ['middleware' => 'auth', 'uses' => 'TournamentController@searchUser']);
 
 
 //without Auth

@@ -66,6 +66,58 @@ class TournamentTeamController extends Controller
         'api_token' => 'required|max:100',
         'team_id' => 'required|max:100',
         'player_name' => 'required|max:100',
+        'player_mobile' => 'required|max:100',
+        'player_userid' => 'required|max:100',
+    ];
+
+    $customMessages = [
+        'required' => 'Please fill required :attribute'
+    ];
+
+    $this->validate($request, $rules, $customMessages);
+    $token = $request->input('api_token');
+    $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+    $checkIfTeamExist = TeamPlayer::where(['PLAYER_USER_ID' =>  $request->player_userid, 'PLAYER_TEAM_ID' => $request->team_id])->first();
+    
+    if(empty($checkIfTeamExist)){
+        
+        $tourTeam = TeamPlayer::create([
+            'PLAYER_USER_ID' => $request->player_userid,
+            'PLAYER_TEAM_ID' => $request->team_id,
+            'PLAYER_NAME' => $request->player_name,
+            'PLAYER_MOBILE' => $request->player_mobile,
+            'PLAYER_STATUS' => 1,
+            'CREATED_BY' => $check_token->USER_ID,
+            'CREATED_AT'  => date('Y-m-d H:i:s'),
+        ]);
+        
+        if(!empty($tourTeam)){
+            $res['status'] = '200';
+            $res['message'] = 'Success';
+            $res['type'] = 'Registered sucessfully';
+            return response($res, 200);
+        }else{
+            $res['status'] = false;
+            $res['message'] = "unable to register in a team";
+            $res['type'] = 'some_error_occured';
+            return response($res);
+        }
+
+    }else{
+        $res['status'] = false;
+        $res['message'] = "Player is already registered in a team.";
+        $res['type'] = 'some_error_occured';
+        return response($res, 400);
+    }
+
+  }
+
+  public function registerPlayerInTour(Request $request){
+
+    $rules = [
+        'api_token' => 'required|max:100',
+        'team_id' => 'required|max:100',
+        'player_name' => 'required|max:100',
         'player_mobile' => 'required|max:100'
     ];
 
