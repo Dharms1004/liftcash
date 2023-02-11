@@ -11,6 +11,6 @@ class TournamentRegistration extends Model
     public $timestamps = false;
     protected $primaryKey = 'ID';
 
-    protected $fillable = ['ID','TOUR_ID','TEAM_ID', 'STATUS', 'CREATED_AT', 'UPDATED_AT'];
+    protected $fillable = ['ID','TOUR_ID','TEAM_ID','USER_ID', 'STATUS', 'CREATED_AT', 'UPDATED_AT'];
 
 }
