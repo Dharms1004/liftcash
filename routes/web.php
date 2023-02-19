@@ -64,6 +64,9 @@ $router->post('/offerDetailsOpen', ['uses' =>  'Offers@getOfferDetails']);
 $router->post('/getGamesOpen', ['uses' => 'Games@getAllGames']);
 $router->post('/getVideosOpen', ['uses' => 'VideoListing@getAllVideos']);
 $router->post('/getMiniBannerOpen', ['uses' => 'MiniBanner@getAllBanners']);
+$router->post('/getJokeCategory', ['uses' => 'Jokes@getJokeCategory']);
+$router->post('/getJokesByCat', ['uses' => 'Jokes@getJokesByCat']);
+$router->post('/getJokesById', ['uses' => 'Jokes@getJokeById']);
 
 
 $router->post('/getNews',['uses' =>  'NewsController@getAllNews']);
