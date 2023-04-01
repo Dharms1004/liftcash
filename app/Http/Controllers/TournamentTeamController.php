@@ -321,5 +321,56 @@ class TournamentTeamController extends Controller
     }
 
   }
+  
+  public function getAllTeamPlayers(Request $request){
+    
+    $rules = [
+        'api_token' => 'required|max:100',
+    ];
+
+    $customMessages = [
+        'required' => 'Please fill required :attribute'
+    ];
+
+    $this->validate($request, $rules, $customMessages);
+    $token = $request->input('api_token');
+    $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
+
+    $getTeams = TournamentTeam::where(['USER_ID' => $check_token->USER_ID])->get();
+
+    if(!empty($getTeams)){   
+        $res['status'] = '200';
+        $res['message'] = 'Success';
+        foreach ($getTeams as $key => $team) {   
+            $newTeam[$key]['team_Id'] = $team->TEAM_ID;
+            $newTeam[$key]['tour_id'] = $team->TEAM_TOUR_ID;
+            $newTeam[$key]['name'] = $team->TEAM_NAME;
+            $newTeam[$key]['desc'] = $team->TEAM_DESCRIPTION;
+            $newTeam[$key]['team_contact'] = $team->TEAM_CONTACT;
+
+            $teamPlayers = TeamPlayer::where(['PLAYER_TEAM_ID' => $team->TEAM_ID])->get();
+
+            if(count($teamPlayers)){
+                foreach ($teamPlayers as $player) {
+                    $newTeam[$key]['teamPlayer'][] = [
+                        'playerName' => $player->PLAYER_NAME,
+                        'playerMobile' => $player->PLAYER_MOBILE,
+                    ];
+                }
+            }else{
+                $newTeam[$key]['teamPlayer'] = [];
+            }
+
+            $res['team'] = $newTeam;
+        }
+        return response($res, 200);
+    }else{
+        $res['status'] = false;
+        $res['message'] = "No teams found.";
+        $res['type'] = 'some_error_occured';
+        return response($res, 400);
+    }
+
+  }
 
 }
