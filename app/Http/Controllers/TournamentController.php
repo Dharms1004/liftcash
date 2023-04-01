@@ -182,6 +182,8 @@ class TournamentController extends Controller
                 "tourRegEndTime" => date("d M Y h:i A", strtotime($activeTour->TOUR_REGISTRATION_END_TIME)),
                 "tourOrgName" => $activeTour->ORG_NAME,
                 "tourOrgContact" => $activeTour->ORG_CONTACT,
+                "tourRoomId" => $activeTour->ROOM_ID ?? "NA",
+                "tourPassword" => $activeTour->PASSWORD ?? "NA",
                 "tourRules" => json_decode($activeTour->TOUR_RULES),
             ];
 

@@ -22,6 +22,7 @@ class Jokes extends Controller
 
                 $res['catId'] = $cat->ID;
                 $res['catName'] = $cat->CATEGORY_NAME;
+                $res['catImage'] = env('JOKE_CAT_URL').$cat->CAT_IMAGE;
                 $allJokes[] = $res;
 
             }
