@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use App\Models\ContestQuestions;
-use App\Models\Contest;
-use App\Models\ContestParticipants;
 use App\Models\User;
 use App\Models\Tournament;
 use App\Models\TournamentWinner;
@@ -36,9 +33,21 @@ class TournamentController extends Controller
         $check_token = User::where('API_TOKEN', $token)->select('USER_ID')->first();
 
         $usersTeam = TournamentTeam::where(['USER_ID' => $check_token->USER_ID])->pluck('TEAM_ID');
-        $upcomingTours = Tournament::where('TOUR_START_TIME', ">=", date('Y-m-d H:i:s'))->where('TOUR_STATUS', 1)->get();
+        $upcomingTours = DB::table('tr_tournament as tt')->join('tr_tournament_registration as ttr', 'tt.TOUR_ID', '=', 'ttr.TOUR_ID')->where('tt.TOUR_STATUS', 1)->where('tt.TOUR_START_TIME', ">=", date('Y-m-d H:i:s'))->where(function($query) use ($usersTeam, $check_token) {
+            foreach ($usersTeam as $team) {
+                $team_id[] = $team;
+           }
+            $query->whereNotIn('ttr.TEAM_ID',$team_id);
+            $query->whereNotIn('ttr.USER_ID',[$check_token->USER_ID]);
+        })->get();
         $completedTours = Tournament::where('TOUR_END_TIME', "<", date('Y-m-d H:i:s'))->where('TOUR_STATUS', 1)->get();
-        $registeringTours = DB::table('tr_tournament as tt')->join('tr_tournament_registration as ttr', 'tt.TOUR_ID', '=', 'ttr.TOUR_ID')->where('tt.TOUR_END_TIME', ">", date('Y-m-d H:i:s'))->where(['tt.TOUR_STATUS' => 1])->whereIn('ttr.TEAM_ID', $usersTeam)->get();
+        $registeringTours = DB::table('tr_tournament as tt')->join('tr_tournament_registration as ttr', 'tt.TOUR_ID', '=', 'ttr.TOUR_ID')->where('tt.TOUR_END_TIME', ">", date('Y-m-d H:i:s'))->where(['tt.TOUR_STATUS' => 1])->where(function($query) use ($usersTeam, $check_token) {
+            foreach ($usersTeam as $team) {
+                $team_id[] = $team;
+           }
+            $query->whereIn('ttr.TEAM_ID',$team_id);
+            $query->orWhereIn('ttr.USER_ID',[$check_token->USER_ID]);
+        })->get();
 
 
         if (count($upcomingTours)) {
@@ -282,7 +291,7 @@ class TournamentController extends Controller
                         if (!empty($teamRegistered)) {
                             $res['status'] = '200';
                             $res['message'] = 'Success';
-                            $res['type'] = 'Team created sucessfully';
+                            $res['type'] = 'Team Register sucessfully';
                             return response($res, 200);
                         } else {
                             $res['status'] = false;
